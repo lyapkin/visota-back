@@ -1,0 +1,68 @@
+from django.shortcuts import render
+from rest_framework import viewsets, generics, mixins
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from django.db.models import Q
+
+from .models import *
+from .serializers import *
+
+class ProductAPIListPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = "page_size"
+    max_page_size = 50
+    
+class ProductApi(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.order_by("-id")
+    serializer_class = ProductSerializer
+    pagination_class = ProductAPIListPagination
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        queryset = Product.objects.order_by("-id")
+
+        query_params = self.request.query_params
+
+        subs = query_params.getlist("sub")
+        if subs is not None and len(subs) > 0:
+            queryset = queryset.filter(sub_categories__slug__in=subs)
+
+        price_min = query_params.get('price_min')
+        price_max = query_params.get('price_max')
+        price_min_valid = True
+        price_max_valid = True
+
+        try:
+            price_min = int(price_min)
+        except:
+            price_min_valid = False
+
+        try:
+            price_max = int(price_max)
+        except:
+            price_max_valid = False
+
+
+        if price_max_valid and price_min_valid:
+            queryset = queryset.filter(current_price__range=[price_min, price_max])
+        elif price_max_valid:
+            queryset = queryset.filter(current_price__lte=price_max)
+        elif price_min_valid:
+            queryset = queryset.filter(current_price__gte=price_min)
+
+        searchline = query_params.get('search')
+        searchline = searchline.strip() if isinstance(searchline, str) else None
+        if searchline is not None:
+            searchline = searchline.split()
+            queryset = queryset.filter(*[Q(name__icontains=q) for q in searchline])
+
+
+        return queryset
+
+
+    @action(detail=False)
+    def categories(self, request):
+        categories = Category.objects.all()
+        categoriesSerializer = CategorySerializer(categories, many=True)
+        return Response(categoriesSerializer.data)
