@@ -40,7 +40,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "current_price",
             "charachteristics",
             "description",
-            "img_urls"
+            "img_urls",
+            'is_present'
         )
         lookup_field = 'slug'
 

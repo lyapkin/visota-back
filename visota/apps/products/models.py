@@ -60,6 +60,7 @@ class Product(models.Model):
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)')
     charachteristics = models.ManyToManyField(CharValue, verbose_name='характеристики товара')
     description = models.TextField('описание товара')
+    is_present = models.BooleanField('в наличии', default=False)
 
     def __str__(self):
         return self.name + ' ' + self.code

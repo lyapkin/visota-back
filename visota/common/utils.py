@@ -20,7 +20,7 @@ class CustomStorage(FileSystemStorage):
         name = os.path.join(folder_name, self.get_valid_name(name))
         return super()._save(name, content)
 
-    location = os.path.join(settings.MEDIA_ROOT, 'uploads/')
+    location = os.path.join(settings.MEDIA_ROOT, 'uploads')
     base_url = urljoin(settings.MEDIA_URL, 'uploads/')
 
 

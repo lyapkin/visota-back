@@ -24,6 +24,10 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
 
         query_params = self.request.query_params
 
+        pks = query_params.getlist('pk')
+        if pks is not None and len(pks) > 0:
+            return queryset.filter(pk__in=pks)
+
         subs = query_params.getlist("sub")
         if subs is not None and len(subs) > 0:
             queryset = queryset.filter(sub_categories__slug__in=subs)
@@ -57,7 +61,6 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
             searchline = searchline.split()
             queryset = queryset.filter(*[Q(name__icontains=q) for q in searchline])
 
-
         return queryset
 
 
@@ -66,3 +69,17 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         categories = Category.objects.all()
         categoriesSerializer = CategorySerializer(categories, many=True)
         return Response(categoriesSerializer.data)
+    
+    @action(detail=False)
+    def cart(self, request):
+        query_params = request.query_params
+
+        pks = query_params.getlist('pk')
+        if pks is not None and len(pks) > 0:
+            pks = map(lambda item: int(item), pks)
+            queryset = Product.objects.filter(id__in=pks)
+            cartSerializer = ProductSerializer(queryset.order_by(*pks), many=True)
+        
+            return Response(cartSerializer.data)
+        
+        return Response(status=404)
