@@ -18,10 +18,11 @@ class ContentFieldSerializer(serializers.Field):
     
 
 class VacancySerializer(serializers.ModelSerializer):
+    description = ContentFieldSerializer()
 
     class Meta:
         model = Vacancy
-        exclude = ('description', "is_open", "last_modified")
+        exclude = ("is_open", "last_modified")
 
 
 class VacancyItemSerializer(serializers.ModelSerializer):

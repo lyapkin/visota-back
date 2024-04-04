@@ -90,11 +90,13 @@
 [
     {
         "id": 3,
+        "description": "<h1>ываываываыв</h1><ul><li>аыва</li><li>ываыв</li><li>ыва</li></ul><p>ываыва</p>",
         "name": "Работник 4",
         "slug": "rabotnik-4"
     },
     {
         "id": 2,
+        "description": "<h1>ыавыаываыва</h1><p>выаывыва</p>",
         "name": "Работник 2",
         "slug": "rabotnik-2"
     }
