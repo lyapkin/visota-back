@@ -110,3 +110,38 @@
     "slug": "rabotnik-4"
 }
 ```
+
+
+
+
+# Наши проекты список
+```
+/api/projects/
+[
+    {
+        "id": 1,
+        "title": "Строительство Амурского Газоперерабатывающий завода",
+        "slug": "stroitelstvo-amurskogo-gazopererabatyvayushij-zavoda",
+        "preview_image": "http://localhost:8000/media/uploads/2024/04/04/projects-gazprom_jfYeIJv.jpg",
+        "content_concise": "Поставка строительных лесов, опалубки и комплектующих, 2021-2027г. Поставка строительных лесов, опалубки",
+        "customer_log": "http://localhost:8000/media/uploads/2024/04/04/gazprom-logo.png",
+        "location": "г. Свободный"
+    }
+]
+```
+
+# Наши проекты проект
+```
+/api/projects/stroitelstvo-amurskogo-gazopererabatyvayushij-zavoda/
+[
+    {
+        "id": 1,
+        "title": "Строительство Амурского Газоперерабатывающий завода",
+        "slug": "stroitelstvo-amurskogo-gazopererabatyvayushij-zavoda",
+        "preview_image": "http://localhost:8000/media/uploads/2024/04/04/projects-gazprom_jfYeIJv.jpg",
+        "content_concise": "Поставка строительных лесов, опалубки и комплектующих, 2021-2027г. Поставка строительных лесов, опалубки",
+        "customer_log": "http://localhost:8000/media/uploads/2024/04/04/gazprom-logo.png",
+        "location": "г. Свободный"
+    }
+]
+```

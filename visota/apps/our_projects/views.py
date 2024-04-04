@@ -1,17 +1,17 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
 
 from .models import *
 from .serializers import *
 
 
-class ArticleApi(viewsets.ReadOnlyModelViewSet):
+class ProjectApi(viewsets.ReadOnlyModelViewSet):
     lookup_field = "slug"
-    queryset = Post.objects.order_by("-id")
+    queryset = Project.objects.order_by("-id")
     serializer_action_classes = {
-        "list": ArticlePreviewSerializer,
-        "retrieve": ArticleSerializer
+        "list": ProjectPreviewSerializer,
+        "retrieve": ProjectSerializer
     }
 
     def get_serializer_class(self):
         return self.serializer_action_classes[self.action]
+
