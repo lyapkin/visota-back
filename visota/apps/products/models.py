@@ -41,7 +41,7 @@ class Charachteristic(models.Model):
 
 class CharValue(models.Model):
     char = models.ForeignKey(Charachteristic, models.CASCADE, related_name='values', verbose_name='название характеристики товара')
-    value = models.CharField("значение характеристики", max_length=50, unique=True)
+    value = models.CharField("значение характеристики", max_length=50)
 
     def __str__(self):
         return self.char.name + ' ' + self.value
@@ -49,6 +49,7 @@ class CharValue(models.Model):
     class Meta:
         verbose_name = "значение характеристики товара"
         verbose_name_plural = "значения характеристик товара"
+        unique_together = ['char', 'value']
 
 
 class Product(models.Model):
