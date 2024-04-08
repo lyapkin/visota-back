@@ -52,18 +52,18 @@ class CharValue(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField("название товара", max_length=100)
-    code = models.CharField("артикул", max_length=20, unique=True)
+    name = models.CharField("название товара", max_length=100, unique=True)
+    code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
     slug = models.SlugField("url", max_length=130, unique=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='подкатегория товара')
-    actual_price = models.PositiveIntegerField('цена')
-    current_price = models.PositiveIntegerField('текущая цена (со скидкой)')
+    actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
+    current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     charachteristics = models.ManyToManyField(CharValue, verbose_name='характеристики товара')
     description = models.TextField('описание товара')
     is_present = models.BooleanField('в наличии', default=False)
 
     def __str__(self):
-        return self.name + ' ' + self.code
+        return self.name
     
     class Meta:
         verbose_name = "товар"

@@ -29,7 +29,7 @@ class ProductAdminForm(forms.ModelForm):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name", 'code')}
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [ImgInline,]
     form = ProductAdminForm
