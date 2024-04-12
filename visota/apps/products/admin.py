@@ -2,12 +2,23 @@ from django.contrib import admin
 from django import forms
 
 # Register your models here.
-from .models import Product, Category, SubCategory, Charachteristic, CharValue, ProductImg
+from .models import Product, Category, SubCategory, Charachteristic, CharValue, ProductImg, ProductDoc
 
 # Register your models here.
+
+
 class ImgInline(admin.TabularInline):
     model = ProductImg
     min_num = 1
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj=None, **kwargs)
+        formset.validate_min = True
+        return formset
+
+
+class DocInline(admin.TabularInline):
+    model = ProductDoc
 
 
 class ProductAdminForm(forms.ModelForm):
@@ -31,7 +42,7 @@ class ProductAdminForm(forms.ModelForm):
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ["name", "code", 'actual_price', 'current_price']
-    inlines = [ImgInline,]
+    inlines = [ImgInline, DocInline]
     form = ProductAdminForm
 
 

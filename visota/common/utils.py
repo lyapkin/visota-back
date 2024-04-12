@@ -26,3 +26,7 @@ class CustomStorage(FileSystemStorage):
 
 def upload_product_img_to(instance, filename):
     return 'images/products/{product}/{filename}'.format(product=instance.product.slug, filename=filename)
+
+
+def upload_product_file_to(instance, filename):
+    return 'images/products/{product}/docs/{filename}'.format(product=instance.product.slug, filename=filename)

@@ -1,6 +1,7 @@
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 
-from common.utils import upload_product_img_to
+from common.utils import upload_product_img_to, upload_product_file_to
 
 # Create your models here.
 class Category(models.Model):
@@ -41,7 +42,7 @@ class Charachteristic(models.Model):
 
 class CharValue(models.Model):
     char = models.ForeignKey(Charachteristic, models.CASCADE, related_name='values', verbose_name='название характеристики товара')
-    value = models.CharField("значение характеристики", max_length=50)
+    value = models.CharField("значение характеристики", max_length=50, unique=False)
 
     def __str__(self):
         return self.char.name + ' ' + self.value
@@ -60,7 +61,8 @@ class Product(models.Model):
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     charachteristics = models.ManyToManyField(CharValue, verbose_name='характеристики товара')
-    description = models.TextField('описание товара')
+    # description = models.TextField('описание товара')
+    description = CKEditor5Field("описание товара", config_name='extends')
     is_present = models.BooleanField('в наличии', default=False)
 
     def __str__(self):
@@ -81,3 +83,16 @@ class ProductImg(models.Model):
     class Meta:
         verbose_name = "изображение товара"
         verbose_name_plural = "изображения товара"
+
+
+class ProductDoc(models.Model):
+    file_name = models.CharField('Название документа', max_length=100)
+    doc_url = models.FileField("документ", upload_to=upload_product_file_to)
+    product = models.ForeignKey(Product, models.CASCADE, related_name='doc_urls', verbose_name='товар')
+
+    def __str__(self):
+        return str(self.file_name + ' ' + str(self.id))
+    
+    class Meta:
+        verbose_name = "документ товара"
+        verbose_name_plural = "документы товара"   
