@@ -78,7 +78,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         if pks is not None and len(pks) > 0:
             pks = map(lambda item: int(item), pks)
             queryset = Product.objects.filter(id__in=pks)
-            cartSerializer = ProductSerializer(queryset.order_by(*pks), many=True)
+            cartSerializer = ProductSerializer(queryset.order_by(*pks), many=True, context={'request': request})
         
             return Response(cartSerializer.data)
         
