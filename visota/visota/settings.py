@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'apps.faq',
     'apps.our_projects',
     'apps.promos',
-    'apps.requests',
+    # 'apps.requests',
 ]
 
 MIDDLEWARE = [
