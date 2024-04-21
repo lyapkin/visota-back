@@ -53,7 +53,7 @@ class Product(TranslatableModel):
         name = models.CharField("название товара", max_length=100, unique=True),
         slug = models.SlugField("url", max_length=130, unique=True),
         description = CKEditor5Field("описание товара", config_name='extends'),
-        priority = models.PositiveSmallIntegerField('позиция в выдаче', default=0)
+        priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000)
     )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='подкатегория товара')
