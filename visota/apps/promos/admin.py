@@ -5,14 +5,14 @@ from .models import Promo, Bonus
 
 # Register your models here.
 
-class PromoAdmin(admin.ModelAdmin):
-    list_display = ["title", 'is_active', 'last_day']
-    ordering=['-last_day']
+# class PromoAdmin(admin.ModelAdmin):
+#     list_display = ["title", 'is_active', 'last_day']
+#     ordering=['-last_day']
 
 
-# class BonusAdmin(admin.ModelAdmin):
-#     list_display = ['condition']
+# # class BonusAdmin(admin.ModelAdmin):
+# #     list_display = ['condition']
 
 
-admin.site.register(Promo, PromoAdmin)
-admin.site.register([Bonus])
+# admin.site.register(Promo, PromoAdmin)
+# admin.site.register([Bonus])
