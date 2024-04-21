@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_ckeditor_5',
+    'parler',
 
     'common',
 
@@ -55,11 +56,13 @@ INSTALLED_APPS = [
     'apps.faq',
     'apps.our_projects',
     'apps.promos',
+    'apps.requests',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -123,6 +126,26 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'ru'
+
+LANGUAGES = (
+    ('ru', 'Русский'),
+    ('en', 'Английский'),
+    ('tr', 'Турецкий'),
+    ('zh', 'Китайский')
+)
+
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'ru'},
+        {'code': 'en'},
+        {'code': 'tr'},
+        {'code': 'zh'},
+    ),
+    'default': {
+        'fallbacks': ['ru'],
+        'hide_untranslated': True,
+    }
+}
 
 TIME_ZONE = 'UTC'
 

@@ -14,13 +14,13 @@ class ProductAPIListPagination(PageNumberPagination):
     max_page_size = 50
     
 class ProductApi(viewsets.ReadOnlyModelViewSet):
-    queryset = Product.objects.order_by("-id")
+    queryset = Product.objects.translated().order_by("-id")
     serializer_class = ProductSerializer
     pagination_class = ProductAPIListPagination
-    lookup_field = 'slug'
+    lookup_field = 'translations__slug'
 
     def get_queryset(self):
-        queryset = Product.objects.order_by("-id")
+        queryset = Product.objects.translated().order_by("translations__priority")
 
         query_params = self.request.query_params
 
@@ -59,14 +59,14 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         searchline = searchline.strip() if isinstance(searchline, str) else None
         if searchline is not None:
             searchline = searchline.split()
-            queryset = queryset.filter(*[Q(name__icontains=q) for q in searchline])
+            queryset = queryset.filter(*[Q(translations__name__icontains=q) for q in searchline])
 
         return queryset
 
 
     @action(detail=False)
     def categories(self, request):
-        categories = Category.objects.all()
+        categories = Category.objects.translated()
         categoriesSerializer = CategorySerializer(categories, many=True)
         return Response(categoriesSerializer.data)
     

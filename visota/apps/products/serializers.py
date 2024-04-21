@@ -1,5 +1,7 @@
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework import serializers
+from parler_rest.serializers import TranslatableModelSerializer
+from parler_rest.fields import TranslatedFieldsField
 
 from .models import *
 
@@ -16,15 +18,17 @@ class ContentFieldSerializer(serializers.Field):
         return content
 
 
-class CharachteristicSerializer(serializers.ModelSerializer):
-    char = serializers.StringRelatedField()
+class CharachteristicSerializer(TranslatableModelSerializer):
+    # char = serializers.StringRelatedField()
+    translations = TranslatedFieldsField(shared_model=CharValue)
 
     class Meta:
         model = CharValue
         fields = (
             'id',
-            'char',
-            'value'
+            # 'key',
+            # 'value',
+            'translations',
         )
 
 
@@ -38,21 +42,21 @@ class ProductImgsSerializer(serializers.ModelSerializer):
         )
 
 
-class ProductDocsSerializer(serializers.ModelSerializer):
+# class ProductDocsSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProductDoc
-        fields = (
-            'id',
-            'doc_url',
-            'file_name'
-        )
+#     class Meta:
+#         model = ProductDoc
+#         fields = (
+#             'id',
+#             'doc_url',
+#             'file_name'
+#         )
 
 
 class ProductSerializer(serializers.ModelSerializer):
     charachteristics = CharachteristicSerializer(many=True)
     img_urls = ProductImgsSerializer(many=True)
-    doc_urls = ProductDocsSerializer(many=True)
+    # doc_urls = ProductDocsSerializer(many=True)
     description = ContentFieldSerializer()
 
     class Meta:
@@ -67,7 +71,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "charachteristics",
             "description",
             "img_urls",
-            'doc_urls',
+            # 'doc_urls',
             'is_present'
         )
         lookup_field = 'slug'
@@ -77,7 +81,7 @@ class SubcategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubCategory
-        exclude = ('category',)
+        fields = ('id', 'slug', 'name')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -85,4 +89,4 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'id', 'slug', 'subcategories')

@@ -1,11 +1,16 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
+from parler.models import TranslatableModel, TranslatedFields
+from common.utils import generate_unique_slug
+
 
 from common.utils import upload_product_img_to, upload_product_file_to
 
 # Create your models here.
-class Category(models.Model):
-    name = models.CharField("название категории", max_length=50, unique=True)
+class Category(TranslatableModel):
+    translations = TranslatedFields(
+        name = models.CharField("название категории", max_length=50, unique=True)
+    )
     slug = models.SlugField("url", max_length=60, unique=True)
 
     def __str__(self):
@@ -14,10 +19,18 @@ class Category(models.Model):
     class Meta:
         verbose_name = "категория"
         verbose_name_plural = "категории"
+        # ordering = ('translations__name',)
+
+    def save(self, *args, **kwargs):
+        if not self.slug.strip():
+            self.slug = generate_unique_slug(Category, self.name)
+        return super().save(*args, **kwargs)
 
 
-class SubCategory(models.Model):
-    name = models.CharField("название подкатегории", max_length=50, unique=True)
+class SubCategory(TranslatableModel):
+    translations = TranslatedFields(
+        name = models.CharField("название подкатегории", max_length=50, unique=True)
+    )
     slug = models.SlugField("url", max_length=60, unique=True)
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
 
@@ -27,42 +40,26 @@ class SubCategory(models.Model):
     class Meta:
         verbose_name = "подкатегория"
         verbose_name_plural = "подкатегории"
+        # ordering = ('translations__name',)
+
+    def save(self, *args, **kwargs):
+        if not self.slug.strip():
+            self.slug = generate_unique_slug(SubCategory, self.name)
+        return super().save(*args, **kwargs)
 
 
-class Charachteristic(models.Model):
-    name = models.CharField("название характеристики", max_length=30, unique=True)
-
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = "характеристика товара"
-        verbose_name_plural = "характеристики товаров"
-
-
-class CharValue(models.Model):
-    char = models.ForeignKey(Charachteristic, models.CASCADE, related_name='values', verbose_name='название характеристики товара')
-    value = models.CharField("значение характеристики", max_length=50, unique=False)
-
-    def __str__(self):
-        return self.char.name + ' ' + self.value
-    
-    class Meta:
-        verbose_name = "значение характеристики товара"
-        verbose_name_plural = "значения характеристик товара"
-        unique_together = ['char', 'value']
-
-
-class Product(models.Model):
-    name = models.CharField("название товара", max_length=100, unique=True)
+class Product(TranslatableModel):
+    translations = TranslatedFields(
+        name = models.CharField("название товара", max_length=100, unique=True),
+        slug = models.SlugField("url", max_length=130, unique=True),
+        description = CKEditor5Field("описание товара", config_name='extends'),
+        priority = models.PositiveSmallIntegerField('позиция в выдаче', default=0)
+    )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
-    slug = models.SlugField("url", max_length=130, unique=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='подкатегория товара')
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
-    charachteristics = models.ManyToManyField(CharValue, verbose_name='характеристики товара')
     # description = models.TextField('описание товара')
-    description = CKEditor5Field("описание товара", config_name='extends')
     is_present = models.BooleanField('в наличии', default=False)
 
     def __str__(self):
@@ -71,6 +68,31 @@ class Product(models.Model):
     class Meta:
         verbose_name = "товар"
         verbose_name_plural = "товары"
+        # ordering = ('translations__name',)
+
+    def save(self, *args, **kwargs):
+        print(self.slug)
+        if not self.slug.strip():
+            self.slug = 'fdsf'
+            self.slug = generate_unique_slug(Product, self.name)
+        return super().save(*args, **kwargs)
+
+
+class CharValue(TranslatableModel):
+    translations = TranslatedFields(
+        key = models.CharField('характеристика', max_length=50),
+        value = models.CharField("значение характеристики", max_length=50),
+        # meta = {'unique_together': [('key', 'value','product')]}
+    )
+    product = models.ForeignKey(Product, models.CASCADE, related_name='charachteristics', verbose_name='товар')
+
+    def __str__(self):
+        return self.product.name + ' ' + self.key + ' ' + self.value
+    
+    class Meta:
+        verbose_name = "характеристика товара"
+        verbose_name_plural = "характеристики товаров"
+        # unique_together = ['translations', 'product']
 
 
 class ProductImg(models.Model):
@@ -85,14 +107,14 @@ class ProductImg(models.Model):
         verbose_name_plural = "изображения товара"
 
 
-class ProductDoc(models.Model):
-    file_name = models.CharField('Название документа', max_length=100)
-    doc_url = models.FileField("документ", upload_to=upload_product_file_to)
-    product = models.ForeignKey(Product, models.CASCADE, related_name='doc_urls', verbose_name='товар')
+# class ProductDoc(models.Model):
+#     file_name = models.CharField('Название документа', max_length=100)
+#     doc_url = models.FileField("документ", upload_to=upload_product_file_to)
+#     product = models.ForeignKey(Product, models.CASCADE, related_name='doc_urls', verbose_name='товар')
 
-    def __str__(self):
-        return str(self.file_name + ' ' + str(self.id))
+#     def __str__(self):
+#         return str(self.file_name + ' ' + str(self.id))
     
-    class Meta:
-        verbose_name = "документ товара"
-        verbose_name_plural = "документы товара"   
+#     class Meta:
+#         verbose_name = "документ товара"
+#         verbose_name_plural = "документы товара"   

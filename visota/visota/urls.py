@@ -18,9 +18,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
-    path('api/', include('apps.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/vacancies/', include('apps.vacancies.urls')),
+    path('api/projects/', include('apps.our_projects.urls')),
+    path('api/promos/', include('apps.promos.urls')),
+    path('api/request/', include('apps.requests.urls')),
+]
+
+urlpatterns += i18n_patterns(
+    path('api/products/', include('apps.products.urls')),
+    path('api/articles/', include('apps.blog.urls')),
+    path('api/faq/', include('apps.faq.urls')),
+) 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
