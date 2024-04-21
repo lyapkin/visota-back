@@ -8,6 +8,7 @@ from common.utils import upload_product_img_to, upload_product_file_to
 
 # Create your models here.
 class Category(TranslatableModel):
+    _name = models.CharField("название категории", max_length=50, unique=True)
     translations = TranslatedFields(
         name = models.CharField("название категории", max_length=50, unique=True)
     )
@@ -28,6 +29,8 @@ class Category(TranslatableModel):
 
 
 class SubCategory(TranslatableModel):
+    _name = models.CharField("название подкатегории", max_length=50, unique=True)
+    
     translations = TranslatedFields(
         name = models.CharField("название подкатегории", max_length=50, unique=True)
     )
@@ -49,6 +52,10 @@ class SubCategory(TranslatableModel):
 
 
 class Product(TranslatableModel):
+    _name = models.CharField("название товара", max_length=100, unique=True)
+    _slug = models.SlugField("url", max_length=130, unique=True)
+    _description = CKEditor5Field("описание товара", config_name='extends')
+
     translations = TranslatedFields(
         name = models.CharField("название товара", max_length=100, unique=True),
         slug = models.SlugField("url", max_length=130, unique=True),
