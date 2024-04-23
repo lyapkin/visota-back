@@ -5,11 +5,12 @@ from .models import *
     
 
 class CommonSerializer(serializers.ModelSerializer):
+    pass
 
     def validate_number(self, number):
-        result = re.match(r'(^[\+][0-9]{1}[0-9]{3}[0-9]{7}$)', number)
+        result = re.match(r'^\+?1?\d{9,15}$', number)
         if result is None:
-            raise serializers.ValidationError('Номер телефона должен быть в форме: +79876543210; укажите код города, если необходимо')
+            raise serializers.ValidationError('Номер телефона указан неверно')
         return number
     
 
@@ -27,16 +28,17 @@ class PriceRequestSerializer(CommonSerializer):
 
 
 class ProductOrderSerializer(serializers.ModelSerializer):
-    order_price = serializers.SerializerMethodField('get_current_price')
+    # order_price = serializers.SerializerMethodField('get_current_price')
 
     class Meta:
         model = ProductOrder
-        exclude = ('order', )
+        fields = ('product', 'count', 'order_price')
 
-    def get_current_price(self, productOrder):
-        print(type(productOrder))
-        current_price = productOrder.product.current_price
-        return current_price
+    # def get_current_price(self, productOrder):
+    #     print(type(productOrder))
+    #     current_price = productOrder.product.current_price
+    #     return current_price
+    
 
 
 class OrderSerializer(CommonSerializer):
@@ -54,13 +56,26 @@ class OrderSerializer(CommonSerializer):
             'products',
         )
 
+    def validate_payment_method(self, method):
+        if (method != 'cash') and (method != 'non-cash'):
+            raise serializers.ValidationError('Выберите способ оплаты')
+        return method
+    
+    def validate_products(self, products):
+        products_dict = {}
+        for p in products:
+            products_dict[p['product'].id] = p['order_price']
+        queryset = Product.objects.filter(pk__in=map(lambda product: product['product'].id, products))
+        for p in queryset.iterator():
+            if p.current_price is not products_dict[p.id]:
+                raise serializers.ValidationError('Цена на один или несколько продуктов изменилась. Перезагрузите страницу.')
+        return products
+
     def create(self, validated_data):
         products = validated_data.pop("products")
         ModelClass = self.Meta.model
         instance = ModelClass.objects.create(**validated_data)
-        print(type(products[0]))
-        ProductOrder.objects.bulk_create([ProductOrder(**product, order_price=product['product'].current_price, order=instance) for product in products])
-        
+        ProductOrder.objects.bulk_create([ProductOrder(**product, order=instance) for product in products])
 
         return instance
 

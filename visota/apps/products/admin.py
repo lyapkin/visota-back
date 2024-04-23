@@ -50,27 +50,19 @@ class CharachterInline(TranslatableTabularInline):
 
 
 class ProductAdmin(TranslatableAdmin):
-    # prepopulated_fields = {"slug": ("name",)}
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [CharachterInline, ImgInline]
     exclude = ('slug',)
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
-    # ordering = ('translations__name',)
 
     def get_queryset(self, request):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
         return super(ProductAdmin, self).get_queryset(request).translated(language_code)
 
-    # def get_prepopulated_fields(self, request, obj=None):
-    #     return {
-    #         'slug': ('name',)
-    #     }
-
 
 class CategoryAdmin(TranslatableAdmin):
-    # prepopulated_fields = {"slug": ("name",)}
     list_display = ["name",]
     exclude = ('slug',)
 
@@ -79,22 +71,15 @@ class CategoryAdmin(TranslatableAdmin):
         language_code = self.get_queryset_language(request)
         return super(CategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
 
-    # def get_prepopulated_fields(self, request, obj=None):
-    #     return {
-    #         'slug': ('name',)
-    #     }
-
 
 class SubCategoryAdmin(TranslatableAdmin):
-    # prepopulated_fields = {"slug": ("name",)}
     list_display = ["name", 'category']
     exclude = ('slug',)
-    ordering = ('translations__name',)
 
-    # def get_prepopulated_fields(self, request, obj=None):
-    #     return {
-    #         'slug': ('name',)
-    #     }
+    def get_queryset(self, request):
+        # Limit to a single language!
+        language_code = self.get_queryset_language(request)
+        return super(SubCategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
 
 
 

@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/vacancies/', include('apps.vacancies.urls')),
     path('api/projects/', include('apps.our_projects.urls')),
     path('api/promos/', include('apps.promos.urls')),
-    # path('api/request/', include('apps.requests.urls')),
+    path('api/request/', include('apps.requests.urls')),
 ]
 
 urlpatterns += i18n_patterns(

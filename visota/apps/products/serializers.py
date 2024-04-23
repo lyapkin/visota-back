@@ -77,11 +77,12 @@ class ProductSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class SubcategorySerializer(serializers.ModelSerializer):
+class SubcategorySerializer(TranslatableModelSerializer):
+    translations = TranslatedFieldsField(shared_model=SubCategory)
 
     class Meta:
         model = SubCategory
-        fields = ('id', 'slug', 'name')
+        fields = ('id', 'slug', 'translations')
 
 
 class CategorySerializer(serializers.ModelSerializer):
