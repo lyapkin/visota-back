@@ -6,7 +6,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 class Vacancy(models.Model):
     name = models.CharField("наименование", max_length=100, unique=True)
     slug = models.SlugField("url", max_length=110, unique=True)
-    description = CKEditor5Field("текст статьи", config_name='extends')
+    description = CKEditor5Field("текст вакансии", config_name='extends')
     is_open = models.BooleanField('вакансия открыта', default=True)
     last_modified = models.DateTimeField("дата изменения", auto_now=True)
 

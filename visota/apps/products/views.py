@@ -66,7 +66,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False)
     def categories(self, request):
-        categories = Category.objects.translated()
+        categories = Category.objects.translated().order_by('priority')
         categoriesSerializer = CategorySerializer(categories, many=True)
         return Response(categoriesSerializer.data)
     
