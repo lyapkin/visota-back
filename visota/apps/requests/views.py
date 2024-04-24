@@ -17,3 +17,8 @@ class PriceRequestApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
 class OrderApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+
+class SampleRequestApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    queryset = SampleRequest.objects.all()
+    serializer_class = SampleRequestSerializer

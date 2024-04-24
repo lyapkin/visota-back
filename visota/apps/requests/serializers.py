@@ -5,7 +5,6 @@ from .models import *
     
 
 class CommonSerializer(serializers.ModelSerializer):
-    pass
 
     def validate_number(self, number):
         result = re.match(r'^\+?1?\d{9,15}$', number)
@@ -52,14 +51,14 @@ class OrderSerializer(CommonSerializer):
             'email',
             'comment',
             'delivery_address',
-            'payment_method',
+            # 'payment_method',
             'products',
         )
 
-    def validate_payment_method(self, method):
-        if (method != 'cash') and (method != 'non-cash'):
-            raise serializers.ValidationError('Выберите способ оплаты')
-        return method
+    # def validate_payment_method(self, method):
+    #     if (method != 'cash') and (method != 'non-cash'):
+    #         raise serializers.ValidationError('Выберите способ оплаты')
+    #     return method
     
     def validate_products(self, products):
         products_dict = {}
@@ -80,3 +79,7 @@ class OrderSerializer(CommonSerializer):
         return instance
 
 
+class SampleRequestSerializer(CommonSerializer):
+    class Meta:
+        model = SampleRequest
+        exclude = ('date',)

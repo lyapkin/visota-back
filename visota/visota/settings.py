@@ -33,6 +33,29 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://localhost:3000',
+    'http://localhost:8000',
+    'https://localhost:8000',
+    'http://79.174.83.16',
+    'https://79.174.83.16'
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
+
 # Application definition
 
 INSTALLED_APPS = [

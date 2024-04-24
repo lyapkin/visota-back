@@ -8,6 +8,7 @@ router = routers.SimpleRouter()
 router.register('consultation', ConsultationRequestApi)
 router.register('price', PriceRequestApi)
 router.register('order', OrderApi)
+router.register('samples', SampleRequestApi)
 
 urlpatterns = [
     path('', include(router.urls)),

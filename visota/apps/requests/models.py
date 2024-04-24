@@ -37,12 +37,12 @@ class PriceRequest(models.Model):
 
 
 class Order(models.Model):
-    CASH = 'cash'
-    NON_CASH = 'non-cash'
-    PAYMENT_METHOD = {
-        CASH: 'Наличный расчет',
-        NON_CASH: 'Безналичный расчет'
-    }
+    # CASH = 'cash'
+    # NON_CASH = 'non-cash'
+    # PAYMENT_METHOD = {
+    #     CASH: 'Наличный расчет',
+    #     NON_CASH: 'Безналичный расчет'
+    # }
 
     name = models.CharField("контактное лицо", max_length=100)
     number = models.CharField("номер телефона", max_length=20)
@@ -50,7 +50,7 @@ class Order(models.Model):
     comment = models.TextField("комментарий", blank=True, null=True)
     delivery_address = models.CharField('адрес доставки', max_length=200)
     date = models.DateTimeField("дата", auto_now_add=True)
-    payment_method = models.CharField(max_length=8, choices=PAYMENT_METHOD)
+    # payment_method = models.CharField(max_length=8, choices=PAYMENT_METHOD)
 
     def __str__(self):
         return 'Заказ ' +  str(self.name) + ' ' + str(self.date)
@@ -73,3 +73,19 @@ class ProductOrder(models.Model):
     class Meta:
         verbose_name = "заказанный товар"
         verbose_name_plural = "заказвнныеы товары"
+
+
+class SampleRequest(models.Model):
+    name = models.CharField("контактное лицо", max_length=100)
+    number = models.CharField("номер телефона", max_length=20)
+    email = models.EmailField('адрес электронной почты', max_length=254)
+    entity = models.TextField("юр. лицо")
+    card = models.CharField('карта партнера', max_length=200)
+    date = models.DateTimeField("дата", auto_now_add=True)
+
+    def __str__(self):
+        return 'Заказ ' +  str(self.name) + ' ' + str(self.date)
+    
+    class Meta:
+        verbose_name = "запрос на образцы продукции"
+        verbose_name_plural = "запросы на образцы продукции"

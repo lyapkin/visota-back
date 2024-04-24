@@ -12,6 +12,7 @@ class Category(TranslatableModel):
         name = models.CharField("название категории", max_length=50, unique=True)
     )
     slug = models.SlugField("url", max_length=60, unique=True)
+    priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
 
     def __str__(self):
         return self.name
@@ -33,6 +34,7 @@ class SubCategory(TranslatableModel):
     )
     slug = models.SlugField("url", max_length=60, unique=True)
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
+    priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
 
     def __str__(self):
         return self.name

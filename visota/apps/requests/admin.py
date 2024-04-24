@@ -44,6 +44,11 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [ProductsInline]
 
 
+class SampleRequestAdmin(admin.ModelAdmin):
+    list_display = ['entity', 'card', 'email', 'number', 'date']
+
+
 admin.site.register(ConsultationRequest, ConsultationRequestAdmin)
 admin.site.register(PriceRequest, PriceRequestAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(SampleRequest, SampleRequestAdmin)
