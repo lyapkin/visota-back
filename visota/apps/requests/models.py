@@ -79,7 +79,7 @@ class SampleRequest(models.Model):
     name = models.CharField("контактное лицо", max_length=100)
     number = models.CharField("номер телефона", max_length=20)
     email = models.EmailField('адрес электронной почты', max_length=254)
-    entity = models.TextField("юр. лицо")
+    entity = models.CharField("юр. лицо", max_length=200)
     card = models.CharField('карта партнера', max_length=200)
     date = models.DateTimeField("дата", auto_now_add=True)
 
