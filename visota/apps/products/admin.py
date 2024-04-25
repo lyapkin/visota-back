@@ -55,6 +55,7 @@ class ProductAdmin(TranslatableAdmin):
     exclude = ('slug',)
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
+    filter_horizontal = ("sub_categories",)
 
     def get_queryset(self, request):
         # Limit to a single language!
