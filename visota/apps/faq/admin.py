@@ -4,14 +4,14 @@ from .models import *
 
 
 # Register your models here.
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ["question"]
-    filter_horizontal = ("categories",)
+# class FAQAdmin(admin.ModelAdmin):
+#     list_display = ["question"]
+#     filter_horizontal = ("categories",)
 
 
-class FAQCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name']
+# class FAQCategoryAdmin(admin.ModelAdmin):
+#     list_display = ['name']
 
 
-admin.site.register(FAQ, FAQAdmin)
-admin.site.register(FAQCategory, FAQCategoryAdmin)
+# admin.site.register(FAQ, FAQAdmin)
+# admin.site.register(FAQCategory, FAQCategoryAdmin)

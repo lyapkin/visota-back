@@ -20,6 +20,15 @@ class ConsultationRequest(models.Model):
         verbose_name_plural = "запросы консультаций"
 
 
+class OfferRequest(ConsultationRequest):
+    def __str__(self):
+        return 'Запрос коммерческого предложения ' + str(self.name) + ' - ' + str(self.number) + ' - ' + str(self.date)
+    
+    class Meta:
+        verbose_name = "запрос коммерческого предложения"
+        verbose_name_plural = "запросы коммерческих предложений"
+
+
 class PriceRequest(models.Model):
     name = models.CharField("контактное лицо", max_length=100)
     number = models.CharField("номер телефона", max_length=20)

@@ -8,6 +8,10 @@ class ConsultationRequestAdmin(admin.ModelAdmin):
     list_display = ["name", "number", "date"]
 
 
+class OfferRequestAdmin(admin.ModelAdmin):
+    list_display = ["name", "number", "date"]
+
+
 class PriceRequestAdmin(admin.ModelAdmin):
     list_display = ["name", "number", "date"]
 
@@ -49,6 +53,7 @@ class SampleRequestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ConsultationRequest, ConsultationRequestAdmin)
+admin.site.register(OfferRequest, OfferRequestAdmin)
 admin.site.register(PriceRequest, PriceRequestAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(SampleRequest, SampleRequestAdmin)

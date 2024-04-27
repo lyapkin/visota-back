@@ -1,5 +1,6 @@
 import re
 from rest_framework import serializers
+from .signals import request_save_handlers
 
 from .models import *
     
@@ -17,6 +18,12 @@ class CommonSerializer(serializers.ModelSerializer):
 class ConsultationRequestSerializer(CommonSerializer):
     class Meta:
         model = ConsultationRequest
+        exclude = ('date',)
+
+
+class OfferRequestSerializer(CommonSerializer):
+    class Meta:
+        model = OfferRequest
         exclude = ('date',)
 
 
@@ -75,6 +82,7 @@ class OrderSerializer(CommonSerializer):
         ModelClass = self.Meta.model
         instance = ModelClass.objects.create(**validated_data)
         ProductOrder.objects.bulk_create([ProductOrder(**product, order=instance) for product in products])
+        request_save_handlers.order_ready.send(ModelClass, instance=instance, created=True)
 
         return instance
 

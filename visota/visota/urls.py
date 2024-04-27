@@ -23,6 +23,7 @@ from django.conf.urls.i18n import i18n_patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('api/vacancies/', include('apps.vacancies.urls')),
     path('api/projects/', include('apps.our_projects.urls')),
     path('api/promos/', include('apps.promos.urls')),

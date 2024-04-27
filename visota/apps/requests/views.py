@@ -9,6 +9,11 @@ class ConsultationRequestApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
     serializer_class = ConsultationRequestSerializer
 
 
+class OfferRequestApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    queryset = OfferRequest.objects.all()
+    serializer_class = OfferRequestSerializer
+
+
 class PriceRequestApi(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = PriceRequest.objects.all()
     serializer_class = PriceRequestSerializer
