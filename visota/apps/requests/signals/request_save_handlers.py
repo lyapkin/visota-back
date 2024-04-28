@@ -60,16 +60,16 @@ def send_mail_on_create(sender, instance=None, created=False, **kwargs):
                        f'Карта партнера: {instance.card}\n')
         
         
-        # try:
-        #     send_mail(
-        #         subject,
-        #         message,
-        #         'd_mal@mail.ru',
-        #         ['d_mal@mail.ru'],
-        #         fail_silently=False
-        #         )
-        # except Exception as e:
-        #     # logger.error(e)
-        #     print(e)
+        try:
+            send_mail(
+                subject,
+                message,
+                'd_mal@mail.ru',
+                ['d_mal@mail.ru'],
+                fail_silently=False
+                )
+        except Exception as e:
+            # logger.error(e)
+            print(e)
 
 
