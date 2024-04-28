@@ -28,4 +28,11 @@ class ArticleSerializer(serializers.ModelSerializer):
 class ArticlePreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        exclude = ("content",)
+        fields = (
+            'id',
+            "title",
+            'slug',
+            'content_concise',
+            'date',
+            'image_url',
+            )
