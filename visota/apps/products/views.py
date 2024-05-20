@@ -20,7 +20,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'translations__slug'
 
     def get_queryset(self):
-        queryset = Product.objects.translated().order_by("translations__priority")
+        queryset = Product.objects.translated().order_by("translations__priority", 'id')
 
         query_params = self.request.query_params
 

@@ -64,8 +64,8 @@ def send_mail_on_create(sender, instance=None, created=False, **kwargs):
             send_mail(
                 subject,
                 message,
-                'd_mal@mail.ru',
-                ['d_mal@mail.ru'],
+                'info@visota13.ru',
+                ['info@visota13.ru'],
                 fail_silently=False
                 )
         except Exception as e:
