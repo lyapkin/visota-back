@@ -1,3 +1,4 @@
+import math
 from django.shortcuts import render
 from rest_framework import viewsets, generics, mixins
 from rest_framework.pagination import PageNumberPagination
@@ -10,8 +11,11 @@ from .serializers import *
 
 class ProductAPIListPagination(PageNumberPagination):
     page_size = 12
-    page_size_query_param = "page_size"
-    max_page_size = 50
+
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data['page_count'] = math.ceil(response.data['count'] / self.get_page_size(self.request))
+        return response
     
 class ProductApi(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.translated().order_by("-id")
