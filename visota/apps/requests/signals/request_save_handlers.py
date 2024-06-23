@@ -4,6 +4,8 @@ from django.core.mail import send_mail
 from ..models import *
 from django.dispatch import Signal
 
+from ..tasks import pass_request_to_email
+
 # print(__name__)
 # logger = logging.getLogger(__name__)
 # print(logger)
@@ -60,16 +62,17 @@ def send_mail_on_create(sender, instance=None, created=False, **kwargs):
                        f'Карта партнера: {instance.card}\n')
         
         
-        try:
-            send_mail(
-                subject,
-                message,
-                'info@visota13.ru',
-                ['info@visota13.ru'],
-                fail_silently=False
-                )
-        except Exception as e:
-            # logger.error(e)
-            print(e)
+        
+        pass_request_to_email.delay(subject, message)
+        # try:
+        #     send_mail(
+        #         subject,
+        #         message,
+        #         'd_mal@mail.ru',
+        #         ['d_mal@mail.ru'],
+        #         fail_silently=False
+        #         )
+        # except SMTPException as e:
+        #     print(e)
 
 
