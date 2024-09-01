@@ -43,7 +43,11 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://localhost:8000',
     'http://79.174.83.16',
-    'https://79.174.83.16'
+    'https://79.174.83.16',
+    'http://visota13.ru',
+    'https://visota13.ru',
+    'http://www.visota13.ru',
+    'https://www.visota13.ru'
 ]
 
 CORS_ALLOW_HEADERS = [
