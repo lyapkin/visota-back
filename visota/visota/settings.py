@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
 
     'common',
+    'seo',
 
     'apps.blog',
     'apps.products',
