@@ -4,7 +4,7 @@ from rest_framework import routers
 
 from .views import *
 
-router = routers.SimpleRouter(trailing_slash=False)
+router = routers.SimpleRouter(trailing_slash=True)
 router.register('', ProductApi)
 
 urlpatterns = [
