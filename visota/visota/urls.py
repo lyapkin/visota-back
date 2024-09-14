@@ -22,7 +22,7 @@ from django.conf.urls.i18n import i18n_patterns
 from seo.views import robots
 
 urlpatterns = [
-    path('robots.txt/', robots),
+    path('robots.txt', robots),
     path('admin/', admin.site.urls),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
     path('ckeditor/', include('ckeditor_uploader.urls')),
