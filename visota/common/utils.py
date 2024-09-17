@@ -3,6 +3,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from urllib.parse import urljoin
 from datetime import datetime
+from time import time
 from django.utils.text import slugify
 from unidecode import unidecode
 
@@ -28,6 +29,12 @@ class CustomStorage(FileSystemStorage):
 
 def upload_product_img_to(instance, filename):
     return 'images/products/{product}/{filename}'.format(product=instance.product.slug, filename=filename)
+
+def upload_category_img_to(instance, filename):
+    return 'images/categories/{filename}-{now}'.format(filename=slugify(unidecode(filename)), now=int(time() * 1000))
+
+def upload_group_img_to(instance, filename):
+    return 'images/groups/{filename}-{now}'.format(filename=slugify(unidecode(filename)), now=int(time() * 1000))
 
 
 def upload_product_file_to(instance, filename):

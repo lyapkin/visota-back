@@ -81,10 +81,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class SubcategorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(shared_model=SubCategory)
+    # img = serializers.CharField(source='img.url')
+    # img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
 
     class Meta:
         model = SubCategory
-        fields = ('id', 'slug', 'translations')
+        fields = ('id', 'slug', 'translations', 'img')
+
+    def to_representation(self, instance):
+        if instance.has_translation(instance.get_current_language()):
+          return super().to_representation(instance)
+        
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -92,4 +99,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('name', 'id', 'slug', 'subcategories')
+        fields = ('name', 'id', 'slug', 'subcategories', 'img')
+
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        result['subcategories'] = [sub for sub in result['subcategories'] if sub is not None]
+        return result

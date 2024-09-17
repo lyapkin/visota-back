@@ -32,9 +32,9 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         if pks is not None and len(pks) > 0:
             return queryset.filter(pk__in=pks)
 
-        subs = query_params.getlist("sub")
-        if subs is not None and len(subs) > 0:
-            queryset = queryset.filter(sub_categories__slug__in=subs)
+        sub = query_params.get("sub")
+        if sub is not None:
+            queryset = queryset.filter(sub_categories__slug=sub)
 
         price_min = query_params.get('price_min')
         price_max = query_params.get('price_max')

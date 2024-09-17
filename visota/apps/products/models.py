@@ -1,7 +1,7 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 from parler.models import TranslatableModel, TranslatedFields
-from common.utils import generate_unique_slug, generate_unique_slug_translated
+from common.utils import generate_unique_slug, generate_unique_slug_translated, upload_category_img_to, upload_group_img_to
 
 
 from common.utils import upload_product_img_to, upload_product_file_to
@@ -13,6 +13,7 @@ class Category(TranslatableModel):
     )
     slug = models.SlugField("url", max_length=60, unique=True)
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
+    img = models.ImageField("картинка группы", upload_to=upload_group_img_to, null=True)
 
     def __str__(self):
         return self.name
@@ -35,6 +36,7 @@ class SubCategory(TranslatableModel):
     slug = models.SlugField("url", max_length=60, unique=True)
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
+    img = models.ImageField("картинка категории", upload_to=upload_category_img_to, null=True)
 
     def __str__(self):
         return self.name
