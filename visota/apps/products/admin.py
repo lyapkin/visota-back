@@ -75,7 +75,6 @@ class CategoryAdmin(TranslatableAdmin):
 
 class SubCategoryAdmin(TranslatableAdmin):
     list_display = ["name", 'category']
-    exclude = ('slug',)
 
     def get_queryset(self, request):
         # Limit to a single language!

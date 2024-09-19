@@ -31,9 +31,9 @@ class Category(TranslatableModel):
 
 class SubCategory(TranslatableModel):
     translations = TranslatedFields(
-        name = models.CharField("название подкатегории", max_length=50, unique=True)
+      name = models.CharField("название подкатегории", max_length=50, unique=True),
+      slug = models.SlugField("url", max_length=60, unique=True)
     )
-    slug = models.SlugField("url", max_length=60, unique=True)
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
     img = models.ImageField("картинка категории", upload_to=upload_category_img_to, null=True)
