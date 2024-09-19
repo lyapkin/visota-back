@@ -33,7 +33,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
-    path('api/products/', include('apps.products.urls')),
+    path('api/catalog/', include('apps.products.urls')),
     path('api/articles/', include('apps.blog.urls')),
     path('api/faq/', include('apps.faq.urls')),
 ) 

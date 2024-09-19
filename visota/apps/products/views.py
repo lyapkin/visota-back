@@ -1,5 +1,5 @@
 import math
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, generics, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -32,9 +32,9 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         if pks is not None and len(pks) > 0:
             return queryset.filter(pk__in=pks)
 
-        sub = query_params.get("sub")
-        if sub is not None:
-            queryset = queryset.filter(sub_categories__slug=sub)
+        # sub = query_params.get("sub")
+        # if sub is not None:
+        #     queryset = queryset.filter(sub_categories__slug=sub)
 
         price_min = query_params.get('price_min')
         price_max = query_params.get('price_max')
@@ -67,12 +67,6 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-
-    @action(detail=False)
-    def categories(self, request):
-        categories = Category.objects.translated().order_by('priority')
-        categoriesSerializer = CategorySerializer(categories, many=True)
-        return Response(categoriesSerializer.data)
     
     @action(detail=False)
     def cart(self, request):
@@ -87,3 +81,84 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
             return Response(cartSerializer.data)
         
         return Response(status=404)
+
+
+class CategoryApi(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.translated().order_by('priority')
+    serializer_class = CategorySerializer
+    # pagination_class = ProductAPIListPagination
+    lookup_field = 'translations__slug'
+    lookup_url_kwarg = 'slug'
+
+    # def retrieve(self, request, slug=None, *args, **kwargs):
+    #     category = get_object_or_404(SubCategory, translations__slug=slug)
+    #     products = category.products.translated().all()
+
+    #     products = self.filter(products)
+
+    #     page = self.paginate_queryset(products)
+    #     if page is not None:
+    #         serializer = ProductSerializer(page, many=True, context={'request': request})
+    #         return self.get_paginated_response(serializer.data)
+
+    #     serializer = self.get_serializer(products, many=True, context={'request': request})
+        
+    #     return Response(serializer.data)
+
+
+    @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
+    def products(self, request, slug=None):
+        category = get_object_or_404(SubCategory, translations__slug=slug)
+        products = category.products.translated().all()
+
+        products = self.filter(products)
+
+        page = self.paginate_queryset(products)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(products, many=True)
+        
+        return Response(serializer.data)
+    
+
+    def filter(self, queryset):
+
+        query_params = self.request.query_params
+
+        pks = query_params.getlist('pk')
+        if pks is not None and len(pks) > 0:
+            return queryset.filter(pk__in=pks)
+
+        price_min = query_params.get('price_min')
+        price_max = query_params.get('price_max')
+        price_min_valid = True
+        price_max_valid = True
+
+        try:
+            price_min = int(price_min)
+        except:
+            price_min_valid = False
+
+        try:
+            price_max = int(price_max)
+        except:
+            price_max_valid = False
+
+
+        if price_max_valid and price_min_valid:
+            queryset = queryset.filter(current_price__range=[price_min, price_max])
+        elif price_max_valid:
+            queryset = queryset.filter(current_price__lte=price_max)
+        elif price_min_valid:
+            queryset = queryset.filter(current_price__gte=price_min)
+
+        searchline = query_params.get('search')
+        searchline = searchline.strip() if isinstance(searchline, str) else None
+        if searchline is not None:
+            searchline = searchline.split()
+            queryset = queryset.filter(*[Q(translations__name__icontains=q) for q in searchline])
+
+        return queryset
+    
