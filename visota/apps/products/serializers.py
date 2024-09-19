@@ -82,7 +82,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class SubcategorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(shared_model=SubCategory)
     # img = serializers.CharField(source='img.url')
-    # img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
+    img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
 
     class Meta:
         model = SubCategory
@@ -96,6 +96,7 @@ class SubcategorySerializer(TranslatableModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = SubcategorySerializer(many=True)
+    img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
 
     class Meta:
         model = Category
