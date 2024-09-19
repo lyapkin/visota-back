@@ -105,6 +105,10 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
         
     #     return Response(serializer.data)
 
+    @action(detail=True)
+    def exists(self, request, slug=None):
+        get_object_or_404(SubCategory, translations__slug=slug)
+        return Response()
 
     @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
     def products(self, request, slug=None):
