@@ -20,7 +20,6 @@ class PostAdmin(TranslatableAdmin):
     # form = PostAdminForm
     # prepopulated_fields = {"slug": ("title",)}
     list_display = ["title", "date"]
-    exclude =('slug',)
 
     def get_queryset(self, request):
         # Limit to a single language!
