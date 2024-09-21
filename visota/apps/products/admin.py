@@ -52,7 +52,6 @@ class CharachterInline(TranslatableTabularInline):
 class ProductAdmin(TranslatableAdmin):
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [CharachterInline, ImgInline]
-    exclude = ('slug',)
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
     filter_horizontal = ("sub_categories",)
