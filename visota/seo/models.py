@@ -14,7 +14,7 @@ class Robots(models.Model):
   
 
 class SEOStaticPage(TranslatableModel):
-  order = models.PositiveSmallIntegerField('позиция')
+  order = models.PositiveSmallIntegerField('позиция (сортировка списка в админке)')
   page = models.CharField(max_length=64, primary_key=True)
   name = models.CharField('страница', max_length=255, unique=True)
   translations = TranslatedFields(
