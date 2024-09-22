@@ -71,6 +71,12 @@ class CategoryAdmin(TranslatableAdmin):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
         return super(CategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
+    
+    def has_add_permission(self, request, obj=None):
+      return False
+    
+    def has_delete_permission(self, request, obj=None):
+      return False
 
 
 class SubCategoryAdmin(TranslatableAdmin):
