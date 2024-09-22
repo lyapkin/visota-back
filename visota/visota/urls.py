@@ -36,6 +36,7 @@ urlpatterns += i18n_patterns(
     path('api/catalog/', include('apps.products.urls')),
     path('api/articles/', include('apps.blog.urls')),
     path('api/faq/', include('apps.faq.urls')),
+    path('api/seo/', include('seo.urls')),
 ) 
 
 if settings.DEBUG:
