@@ -9,7 +9,7 @@ from common.utils import upload_product_img_to, upload_product_file_to
 # Create your models here.
 class Category(TranslatableModel):
     translations = TranslatedFields(
-        name = models.CharField("название категории", max_length=50, unique=True)
+        name = models.CharField("название группы", max_length=50, unique=True)
     )
     slug = models.SlugField("url", max_length=60, unique=True)
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
@@ -19,8 +19,8 @@ class Category(TranslatableModel):
         return self.name
     
     class Meta:
-        verbose_name = "категория"
-        verbose_name_plural = "категории"
+        verbose_name = "группа категории"
+        verbose_name_plural = "группы категорий"
         # ordering = ('translations__name',)
 
     def save(self, *args, **kwargs):
@@ -31,10 +31,10 @@ class Category(TranslatableModel):
 
 class SubCategory(TranslatableModel):
     translations = TranslatedFields(
-      name = models.CharField("название подкатегории", max_length=50, unique=True),
+      name = models.CharField("название категории", max_length=50, unique=True),
       slug = models.SlugField("url", max_length=60, unique=True, blank=True)
     )
-    category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
+    category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='группа')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
     img = models.ImageField("картинка категории", upload_to=upload_category_img_to, null=True)
 
@@ -42,8 +42,8 @@ class SubCategory(TranslatableModel):
         return self.name
     
     class Meta:
-        verbose_name = "подкатегория"
-        verbose_name_plural = "подкатегории"
+        verbose_name = "категория"
+        verbose_name_plural = "категории"
         # ordering = ('translations__name',)
 
     def save(self, *args, **kwargs):
@@ -60,7 +60,7 @@ class Product(TranslatableModel):
         priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000)
     )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
-    sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='подкатегория товара')
+    sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='категория товара')
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     # description = models.TextField('описание товара')
