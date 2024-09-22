@@ -15,7 +15,7 @@ class Robots(models.Model):
 
 class SEOStaticPage(TranslatableModel):
   page = models.CharField(max_length=64, primary_key=True)
-  name = models.CharField('страница', max_length=32, unique=True)
+  name = models.CharField('страница', max_length=255, unique=True)
   translations = TranslatedFields(
     header = models.CharField("h1", max_length=255, unique=True),
     title = models.CharField("title", max_length=255),
