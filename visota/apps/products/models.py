@@ -32,7 +32,7 @@ class Category(TranslatableModel):
 class SubCategory(TranslatableModel):
     translations = TranslatedFields(
       name = models.CharField("название подкатегории", max_length=50, unique=True),
-      slug = models.SlugField("url", max_length=60, unique=True)
+      slug = models.SlugField("url", max_length=60, unique=True, blank=True)
     )
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='категория')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
@@ -48,14 +48,14 @@ class SubCategory(TranslatableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
-            self.slug = generate_unique_slug(SubCategory, self.name)
+            self.slug = generate_unique_slug_translated(SubCategory, self.name)
         return super().save(*args, **kwargs)
 
 
 class Product(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField("название товара", max_length=100, unique=True),
-        slug = models.SlugField("url", max_length=130, unique=True),
+        slug = models.SlugField("url", max_length=130, unique=True, blank=True),
         description = CKEditor5Field("описание товара", config_name='extends'),
         priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000)
     )
