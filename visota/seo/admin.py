@@ -14,6 +14,7 @@ admin.site.register(Robots, RobotsAdmin)
 
 
 class SEOStaticPageAdmin(TranslatableAdmin):
+  ordering = ('order',)
 
   def get_fields(self, request, obj=None):
     if obj:
