@@ -18,9 +18,9 @@ class SEOStaticPageAdmin(TranslatableAdmin):
 
   def get_fields(self, request, obj=None):
     if obj:
-        return ['name', 'header', 'title', 'description', 'noindex_follow']
+        return ['name', 'header', 'title', 'description', 'noindex_follow', 'order']
     else:
-        return ['page', 'name', 'header', 'title', 'description', 'noindex_follow']
+        return ['page', 'name', 'header', 'title', 'description', 'noindex_follow', 'order']
 
   def get_readonly_fields(self, request, obj=None):
     if obj:
