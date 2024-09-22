@@ -50,6 +50,7 @@ class CharachterInline(TranslatableTabularInline):
 
 
 class ProductAdmin(TranslatableAdmin):
+    fields = ['name', 'slug', 'sub_categories', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'priority']
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [CharachterInline, ImgInline]
     # inlines = [CharachterInline, ImgInline, DocInline]
@@ -73,6 +74,7 @@ class CategoryAdmin(TranslatableAdmin):
 
 
 class SubCategoryAdmin(TranslatableAdmin):
+    fields = ['name', 'slug', 'category', 'img', 'priority']
     list_display = ["name", 'category']
 
     def get_queryset(self, request):
