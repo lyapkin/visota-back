@@ -35,3 +35,33 @@ class SEOStaticPageAdmin(TranslatableAdmin):
     return False
 
 admin.site.register(SEOStaticPage, SEOStaticPageAdmin)
+
+
+class SEOCategoryPageAdmin(TranslatableAdmin):
+   def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["category"]
+    else:
+        return []
+    
+admin.site.register(SEOCategoryPage, SEOCategoryPageAdmin)
+
+
+class SEOProductPageAdmin(TranslatableAdmin):
+   def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["product"]
+    else:
+        return []
+    
+admin.site.register(SEOProductPage, SEOProductPageAdmin)
+
+
+class SEOPostPageAdmin(TranslatableAdmin):
+   def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["post"]
+    else:
+        return []
+    
+admin.site.register(SEOPostPage, SEOPostPageAdmin)

@@ -5,23 +5,14 @@ from parler_rest.fields import TranslatedFieldsField
 
 from .models import *
 
-class SEOStaticPageSerializer(TranslatableModelSerializer):
 
-  class Meta:
-    model = SEOStaticPage
-    fields = (
-      'header',
-      'title',
-      'description',
-      'noindex_follow',
-    )
-
+class SEOPageSerializer(TranslatableModelSerializer):
   def to_representation(self, instance):
     translated = instance.has_translation(instance.get_current_language())
 
     if translated:
       representation = super().to_representation(instance)
-      header = representation['header']
+      header = representation.get('header', None)
       robots = {
         'index': False,
         'follow': True,
@@ -39,5 +30,50 @@ class SEOStaticPageSerializer(TranslatableModelSerializer):
       
     else:
       result = {'translated': False}
-    print(result)
+    
     return result
+  
+
+class SEOStaticPageSerializer(SEOPageSerializer):
+
+  class Meta:
+    model = SEOStaticPage
+    fields = (
+      'header',
+      'title',
+      'description',
+      'noindex_follow',
+    )
+
+
+class SEOCategoryPageSerializer(SEOPageSerializer):
+
+  class Meta:
+    model = SEOCategoryPage
+    fields = (
+      'title',
+      'description',
+      'noindex_follow',
+    )
+
+
+class SEOProductPageSerializer(SEOPageSerializer):
+
+  class Meta:
+    model = SEOProductPage
+    fields = (
+      'title',
+      'description',
+      'noindex_follow',
+    )
+
+
+class SEOPostPageSerializer(SEOPageSerializer):
+
+  class Meta:
+    model = SEOProductPage
+    fields = (
+      'title',
+      'description',
+      'noindex_follow',
+    )
