@@ -30,3 +30,4 @@ class SEOStaticPage(TranslatableModel):
   class Meta:
     verbose_name = "SEO для статических страниц"
     verbose_name_plural = "SEO для статических страниц"
+    ordering = ('order',)
