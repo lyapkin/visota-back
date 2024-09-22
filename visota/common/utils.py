@@ -31,10 +31,10 @@ def upload_product_img_to(instance, filename):
     return 'images/products/{product}/{filename}'.format(product=instance.product.slug, filename=filename)
 
 def upload_category_img_to(instance, filename):
-    return 'images/categories/{now}-{filename}'.format(filename=slugify(unidecode(filename)), now=int(time() * 1000))
+    return 'images/categories/{now}-{filename}'.format(filename=slugify(filename), now=int(time() * 1000))
 
 def upload_group_img_to(instance, filename):
-    return 'images/groups/{now}-{filename}'.format(filename=slugify(unidecode(filename)), now=int(time() * 1000))
+    return 'images/groups/{now}-{filename}'.format(filename=slugify(filename), now=int(time() * 1000))
 
 
 def upload_product_file_to(instance, filename):
