@@ -5,3 +5,4 @@ static/
 db.sqlite3
 media/
 db.json
+_delete/
