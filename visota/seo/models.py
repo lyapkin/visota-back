@@ -15,6 +15,11 @@ class Robots(models.Model):
     return 'robots.txt'
   
 
+class Sitemap(models.Model):
+  pass
+
+  
+
 class SEOStaticPage(TranslatableModel):
   order = models.PositiveSmallIntegerField('позиция (сортировка списка в админке)')
   page = models.CharField(max_length=64, primary_key=True)
@@ -25,6 +30,8 @@ class SEOStaticPage(TranslatableModel):
     description = models.TextField('description'),
     noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
   )
+
+  sitemap = models.ForeignKey(Sitemap, related_name='statics', on_delete=models.PROTECT)
 
   def __str__(self):
     return self.name
@@ -43,6 +50,8 @@ class SEOCategoryPage(TranslatableModel):
     noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
   )
 
+  sitemap = models.ForeignKey(Sitemap, related_name='categories', on_delete=models.PROTECT, default=1)
+
   def __str__(self):
     return self.category.name
     
@@ -59,6 +68,8 @@ class SEOProductPage(TranslatableModel):
     noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
   )
 
+  sitemap = models.ForeignKey(Sitemap, related_name='products', on_delete=models.PROTECT, default=1)
+
   def __str__(self):
     return self.product.name
     
@@ -74,6 +85,8 @@ class SEOPostPage(TranslatableModel):
     description = models.TextField('description'),
     noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
   )
+
+  sitemap = models.ForeignKey(Sitemap, related_name='posts', on_delete=models.PROTECT, default=1)
 
   def __str__(self):
     return self.post.title

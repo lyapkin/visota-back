@@ -9,6 +9,7 @@ router.register('static', MetaStaticApi)
 router.register('category', MetaCategoryApi)
 router.register('product', MetaProductApi)
 router.register('blog', MetaPostApi)
+router.register('sitemap', SitemapApi)
 
 urlpatterns = [
     path('meta/', include(router.urls)),
