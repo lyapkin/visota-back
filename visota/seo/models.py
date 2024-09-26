@@ -1,4 +1,6 @@
+from decimal import Decimal
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from parler.models import TranslatableModel, TranslatedFields
 from apps.products.models import SubCategory, Product
 from apps.blog.models import Post
@@ -15,6 +17,17 @@ class Robots(models.Model):
     return 'robots.txt'
   
 
+CHANGE_FREQ_CHOICES = {
+  'always': 'always',
+  'hourly': 'hourly',
+  'daily': 'daily',
+  'weekly': 'weekly',
+  'monthly': 'monthly',
+  'yearly': 'yearly',
+  'never': 'never'
+}
+  
+
 class Sitemap(models.Model):
   pass
 
@@ -28,10 +41,12 @@ class SEOStaticPage(TranslatableModel):
     header = models.CharField("h1", max_length=255, unique=True),
     title = models.CharField("title", max_length=255),
     description = models.TextField('description'),
-    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
+    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False),
+    change_freq = models.CharField('changefreq', max_length=7, choices=CHANGE_FREQ_CHOICES, default='yearly'),
+    priority = models.DecimalField('priority', max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1')), MaxValueValidator(Decimal('1.0'))], default=1.0)
   )
 
-  sitemap = models.ForeignKey(Sitemap, related_name='statics', on_delete=models.PROTECT)
+  sitemap = models.ForeignKey(Sitemap, related_name='statics', on_delete=models.PROTECT, default=1)
 
   def __str__(self):
     return self.name
@@ -47,7 +62,9 @@ class SEOCategoryPage(TranslatableModel):
   translations = TranslatedFields(
     title = models.CharField("title", max_length=255),
     description = models.TextField('description'),
-    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
+    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False),
+    change_freq = models.CharField('changefreq', max_length=7, choices=CHANGE_FREQ_CHOICES, default='yearly'),
+    priority = models.DecimalField('priority', max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1')), MaxValueValidator(Decimal('1.0'))], default=1.0)
   )
 
   sitemap = models.ForeignKey(Sitemap, related_name='categories', on_delete=models.PROTECT, default=1)
@@ -65,7 +82,9 @@ class SEOProductPage(TranslatableModel):
   translations = TranslatedFields(
     title = models.CharField("title", max_length=255),
     description = models.TextField('description'),
-    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
+    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False),
+    change_freq = models.CharField('changefreq', max_length=7, choices=CHANGE_FREQ_CHOICES, default='yearly'),
+    priority = models.DecimalField('priority', max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1')), MaxValueValidator(Decimal('1.0'))], default=1.0)
   )
 
   sitemap = models.ForeignKey(Sitemap, related_name='products', on_delete=models.PROTECT, default=1)
@@ -83,7 +102,9 @@ class SEOPostPage(TranslatableModel):
   translations = TranslatedFields(
     title = models.CharField("title", max_length=255),
     description = models.TextField('description'),
-    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False)
+    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False),
+    change_freq = models.CharField('changefreq', max_length=7, choices=CHANGE_FREQ_CHOICES, default='yearly'),
+    priority = models.DecimalField('priority', max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1')), MaxValueValidator(Decimal('1.0'))], default=1.0)
   )
 
   sitemap = models.ForeignKey(Sitemap, related_name='posts', on_delete=models.PROTECT, default=1)
