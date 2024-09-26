@@ -14,7 +14,8 @@ class Post(TranslatableModel):
         content = CKEditor5Field("текст статьи", config_name='extends2'),
         # content = RichTextField("текст статьи"),
         content_concise = models.TextField("краткое описание статьи", max_length=120),
-        date = models.DateField("дата", auto_now_add=True)
+        date = models.DateField("дата", auto_now_add=True),
+        last_modified = models.DateField(auto_now=True)
     )
     image_url = models.ImageField("изображение", storage=CustomStorage)
 

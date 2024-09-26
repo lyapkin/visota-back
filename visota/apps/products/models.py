@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 from parler.models import TranslatableModel, TranslatedFields
@@ -32,7 +33,8 @@ class Category(TranslatableModel):
 class SubCategory(TranslatableModel):
     translations = TranslatedFields(
       name = models.CharField("название категории", max_length=50, unique=True),
-      slug = models.SlugField("url", max_length=60, unique=True, blank=True)
+      slug = models.SlugField("url", max_length=60, unique=True, blank=True),
+      last_modified = models.DateField(auto_now=True)
     )
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='группа')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
@@ -57,7 +59,8 @@ class Product(TranslatableModel):
         name = models.CharField("название товара", max_length=100, unique=True),
         slug = models.SlugField("url", max_length=130, unique=True, blank=True),
         description = CKEditor5Field("описание товара", config_name='extends'),
-        priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000)
+        priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000),
+        last_modified = models.DateField(auto_now=True)
     )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='категория товара')
