@@ -1,5 +1,6 @@
 import math
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from rest_framework import viewsets, generics, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -107,12 +108,27 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True)
     def exists(self, request, slug=None):
-        get_object_or_404(SubCategory, translations__slug=slug)
-        return Response()
+        # get_object_or_404(SubCategory, translations__slug=slug)
+        try:
+          SubCategory.objects.get(translations__slug=slug)
+          return Response()
+        except SubCategory.DoesNotExist:
+          # return redirect('http://localhost:3000/', permanent=True)
+          response = HttpResponse(status=301)
+          response['Location'] = 'http://loclahost:8000/ru/api'
+          return response
 
     @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
     def products(self, request, slug=None):
-        category = get_object_or_404(SubCategory, translations__slug=slug)
+        # category = get_object_or_404(SubCategory, translations__slug=slug)
+        try:
+          category = SubCategory.objects.get(translations__slug=slug)
+        except SubCategory.DoesNotExist:
+          return redirect('https://visota13.ru/', permanent=True)
+          # response = HttpResponse(status=301)
+          # response['Location'] = 'https://visota13.ru/'
+          # return response
+        
         products = category.products.translated().all()
 
         products = self.filter(products)
