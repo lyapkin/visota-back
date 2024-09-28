@@ -124,7 +124,7 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
         try:
           category = SubCategory.objects.get(translations__slug=slug)
         except SubCategory.DoesNotExist:
-          return redirect('https://visota13.ru/', permanent=True)
+          return redirect('https://visota13.ru/catalog/', permanent=True)
           # response = HttpResponse(status=301)
           # response['Location'] = 'https://visota13.ru/'
           # return response
