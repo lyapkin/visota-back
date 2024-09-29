@@ -4,7 +4,7 @@ from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRel
 from parler.forms import TranslatableModelForm
 
 # Register your models here.
-from .models import Product, Category, SubCategory, CharValue, ProductImg
+from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom
 
 # Register your models here.
 
@@ -49,10 +49,14 @@ class CharachterInline(TranslatableTabularInline):
 #         )
 
 
+class ProductRedirectFromInline(admin.TabularInline):
+  model = ProductRedirectFrom
+  extra = 1
+
 class ProductAdmin(TranslatableAdmin):
     fields = ['name', 'slug', 'sub_categories', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'priority']
     list_display = ["name", "code", 'actual_price', 'current_price']
-    inlines = [CharachterInline, ImgInline]
+    inlines = [CharachterInline, ImgInline, ProductRedirectFromInline]
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
     filter_horizontal = ("sub_categories",)
@@ -79,9 +83,14 @@ class CategoryAdmin(TranslatableAdmin):
       return False
 
 
+class CategoryRedirectFromInline(admin.TabularInline):
+  model = CategoryRedirectFrom
+  extra = 1
+
 class SubCategoryAdmin(TranslatableAdmin):
     fields = ['name', 'slug', 'category', 'img', 'priority']
     list_display = ["name", 'category']
+    inlines = (CategoryRedirectFromInline,)
 
     def get_queryset(self, request):
         # Limit to a single language!

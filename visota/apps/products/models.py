@@ -1,4 +1,6 @@
 from datetime import date
+from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 from parler.models import TranslatableModel, TranslatedFields
@@ -8,6 +10,46 @@ from common.utils import generate_unique_slug, generate_unique_slug_translated, 
 from common.utils import upload_product_img_to, upload_product_file_to
 
 # Create your models here.
+class CategoryRedirectFrom(models.Model):
+  to = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
+  old_slug = models.CharField("старый url", max_length=60, unique=True)
+  lang = models.CharField('языковая версия категории старого url', max_length=2, choices=settings.LANGUAGES, default='ru')
+
+  # class Meta:
+  #   constraints = [
+  #     models.UniqueConstraint(fields=['old_slug', 'lang'], name='unique_slug_for_lang'),
+  #   ]
+
+  def __str__(self):
+    category = self.to
+    category.set_current_language('ru')
+    return f'язык: {self.lang}; старый слаг: {self.old_slug}; к: {category.name}'
+    
+  class Meta:
+    verbose_name = "Старый слаг (редирект (seo))"
+    verbose_name_plural = "Старые слаги (редирект (seo))"
+
+
+class ProductRedirectFrom(models.Model):
+  to = models.ForeignKey('Product', on_delete=models.CASCADE)
+  old_slug = models.CharField("старый url", max_length=60, unique=True)
+  lang = models.CharField('языковая версия продукта старого url', max_length=2, choices=settings.LANGUAGES, default='ru')
+
+  # class Meta:
+  #   constraints = [
+  #     models.UniqueConstraint(fields=['old_slug', 'lang'], name='unique_slug_for_lang'),
+  #   ]
+
+  def __str__(self):
+    product = self.to
+    product.set_current_language('ru')
+    return f'язык: {self.lang}; старый слаг: {self.old_slug}; к: {product.name}'
+    
+  class Meta:
+    verbose_name = "Старый слаг (редирект (seo))"
+    verbose_name_plural = "Старые слаги (редирект (seo))"
+
+
 class Category(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField("название группы", max_length=50, unique=True)
@@ -28,12 +70,18 @@ class Category(TranslatableModel):
         if not self.slug.strip():
             self.slug = generate_unique_slug(Category, self.name)
         return super().save(*args, **kwargs)
+    
+
+def validate_is_category_slug_old(value):
+  result = CategoryRedirectFrom.objects.filter(old_slug=value).exists()
+  if result:
+      raise ValidationError('Этот slug уже использовался')
 
 
 class SubCategory(TranslatableModel):
     translations = TranslatedFields(
       name = models.CharField("название категории", max_length=50, unique=True),
-      slug = models.SlugField("url", max_length=60, unique=True, blank=True),
+      slug = models.SlugField("url", max_length=60, unique=True, blank=True, validators=[validate_is_category_slug_old]),
       last_modified = models.DateField(auto_now=True)
     )
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='группа')
@@ -50,14 +98,20 @@ class SubCategory(TranslatableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
-            self.slug = generate_unique_slug_translated(SubCategory, self.name)
+            self.slug = generate_unique_slug_translated(SubCategory, SubCategory.categoryredirectfrom_set.rel.related_model, self.name)
         return super().save(*args, **kwargs)
+
+
+def validate_is_product_slug_old(value):
+  result = ProductRedirectFrom.objects.filter(old_slug=value).exists()
+  if result:
+      raise ValidationError('Этот slug уже использовался')
 
 
 class Product(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField("название товара", max_length=100, unique=True),
-        slug = models.SlugField("url", max_length=130, unique=True, blank=True),
+        slug = models.SlugField("url", max_length=130, unique=True, blank=True, validators=[validate_is_product_slug_old]),
         description = CKEditor5Field("описание товара", config_name='extends'),
         priority = models.PositiveSmallIntegerField('позиция в выдаче', default=32000),
         last_modified = models.DateField(auto_now=True)
@@ -79,7 +133,7 @@ class Product(TranslatableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
-            self.slug = generate_unique_slug_translated(Product, self.name)
+            self.slug = generate_unique_slug_translated(Product, Product.productredirectfrom_set.rel.related_model, self.name)
         return super().save(*args, **kwargs)
 
 
@@ -123,3 +177,9 @@ class ProductImg(models.Model):
 #     class Meta:
 #         verbose_name = "документ товара"
 #         verbose_name_plural = "документы товара"   
+
+
+
+
+
+

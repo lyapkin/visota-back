@@ -1,4 +1,5 @@
 import math
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets, generics, mixins
@@ -6,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Q
+from django.utils.translation import get_language
 
 from .models import *
 from .serializers import *
@@ -23,6 +25,17 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = ProductAPIListPagination
     lookup_field = 'translations__slug'
+    lookup_url_kwarg = 'slug'
+
+    def retrieve(self, request, slug=None, *args, **kwargs):
+        # return super().retrieve(request, *args, **kwargs)
+        try:
+          instance = self.get_object()
+        except Http404:
+          active_slug = get_object_or_404(ProductRedirectFrom, lang=get_language(), old_slug=slug)
+          return redirect(f'/{active_slug.to.slug}/', permanent=True)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def get_queryset(self):
         queryset = Product.objects.translated().order_by("translations__priority", 'id')
@@ -108,26 +121,16 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True)
     def exists(self, request, slug=None):
-        # get_object_or_404(SubCategory, translations__slug=slug)
         try:
           SubCategory.objects.get(translations__slug=slug)
           return Response()
         except SubCategory.DoesNotExist:
-          # return redirect('http://localhost:3000/', permanent=True)
-          response = HttpResponse(status=301)
-          response['Location'] = 'http://loclahost:8000/ru/api'
-          return response
+          active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
+          return redirect(f'/{active_slug.to.slug}/', permanent=True)
 
     @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
     def products(self, request, slug=None):
-        # category = get_object_or_404(SubCategory, translations__slug=slug)
-        try:
-          category = SubCategory.objects.get(translations__slug=slug)
-        except SubCategory.DoesNotExist:
-          return redirect('https://visota13.ru/catalog/', permanent=True)
-          # response = HttpResponse(status=301)
-          # response['Location'] = 'https://visota13.ru/'
-          # return response
+        category = get_object_or_404(SubCategory, translations__slug=slug)
         
         products = category.products.translated().all()
 
