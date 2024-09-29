@@ -34,7 +34,7 @@ class CharachteristicSerializer(TranslatableModelSerializer):
 
 class ProductImgsSerializer(serializers.ModelSerializer):
     # img_url = serializers.CharField(source='img_url.url')
-    # img_url = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
+    img_url = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
 
     class Meta:
         model = ProductImg
