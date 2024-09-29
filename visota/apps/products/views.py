@@ -1,5 +1,5 @@
 import math
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from rest_framework import viewsets, generics, mixins
@@ -122,8 +122,8 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
     @action(detail=True)
     def exists(self, request, slug=None):
         try:
-          SubCategory.objects.get(translations__slug=slug)
-          return Response()
+          cat = SubCategory.objects.get(translations__slug=slug)
+          return JsonResponse({"name": cat.name})
         except SubCategory.DoesNotExist:
           active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
           return redirect(f'/{active_slug.to.slug}/', permanent=True)
