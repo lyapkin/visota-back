@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django import forms
+from django.http import HttpRequest
 from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRelatedFieldListFilter
 from parler.forms import TranslatableModelForm
 
 # Register your models here.
 from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom
+from .signals import full_product_save_admin, full_category_save_admin
 
 # Register your models here.
 
@@ -65,6 +67,14 @@ class ProductAdmin(TranslatableAdmin):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
         return super(ProductAdmin, self).get_queryset(request).translated(language_code)
+    
+    # def save_related(self, request, form, formsets, change):
+    #   super().save_related(request, form, formsets, change)
+    #   changed = form.has_changed()
+    #   for f in formsets:
+    #     if f.model is CharValue:
+    #       changed = changed or f.has_changed()
+    #   receivers = full_product_save_admin.send(sender=Product, instance=form.instance, changed=changed)
 
 
 class CategoryAdmin(TranslatableAdmin):
@@ -88,7 +98,7 @@ class CategoryRedirectFromInline(admin.TabularInline):
   extra = 1
 
 class SubCategoryAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'category', 'img', 'priority']
+    fields = ['name', 'slug', 'category', 'img', 'description', 'priority']
     list_display = ["name", 'category']
     inlines = (CategoryRedirectFromInline,)
 
@@ -97,6 +107,13 @@ class SubCategoryAdmin(TranslatableAdmin):
         language_code = self.get_queryset_language(request)
         return super(SubCategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
 
+    # def save_related(self, request, form, formsets, change):
+    #   super().save_related(request, form, formsets, change)
+    #   changed = False
+    #   for d in form.changed_data:
+    #     if d == 'name' or d == 'description':
+    #        changed = True
+    #   receivers = full_category_save_admin.send(sender=SubCategory, instance=form.instance, changed=changed)
 
 
 class CharValueAdmin(TranslatableAdmin):

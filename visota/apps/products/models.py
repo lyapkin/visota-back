@@ -82,6 +82,7 @@ class SubCategory(TranslatableModel):
     translations = TranslatedFields(
       name = models.CharField("название категории", max_length=50, unique=True),
       slug = models.SlugField("url", max_length=60, unique=True, blank=True, validators=[validate_is_category_slug_old]),
+      description = models.TextField('описание'),
       last_modified = models.DateField(auto_now=True)
     )
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='группа')

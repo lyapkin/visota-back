@@ -115,3 +115,24 @@ class SEOPostPage(TranslatableModel):
   class Meta:
     verbose_name = "SEO для поста"
     verbose_name_plural = "SEO для поста"
+
+
+class MetaGenerationRule(TranslatableModel):
+  choices = {
+    'ctg': 'Категория',
+    'prd': 'Товар'
+  }
+
+  type = models.CharField('тип', max_length=3, choices=choices)
+  instruction = models.TextField('инструкция')
+  translations = TranslatedFields(
+    title = models.CharField('правило генерации Title', max_length=255),
+    description = models.CharField('правило генерации Description', max_length=255)
+  )
+
+  def __str__(self):
+    return self.choices[self.type]
+    
+  class Meta:
+    verbose_name = "правило генерации метатегов"
+    verbose_name_plural = "правила генерации метатегов"
