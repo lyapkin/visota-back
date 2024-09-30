@@ -7,7 +7,13 @@ from apps.blog.models import Post
 from seo.models import SEOCategoryPage, SEOProductPage, SEOPostPage, MetaGenerationRule
 
 
-@receiver(full_category_save_admin, sender=SubCategory, dispatch_uid="createCatTranslation")
+@receiver(post_save, sender=SubCategory, dispatch_uid="saveCategory")
+def create_category_seo_page(sender, instance, created, **kwargs):
+  if created:
+    seo_product_page, _ = SEOCategoryPage.objects.get_or_create(product=instance)
+
+
+@receiver(full_category_save_admin, sender=SubCategory, dispatch_uid="fullCategorySaveAdmin")
 def create_category_seo(sender, instance, changed, **kwargs):
   if changed:
     sub_category = instance
@@ -30,7 +36,13 @@ def create_category_seo(sender, instance, changed, **kwargs):
       seo_category_page.create_translation(lang, title=title, description=description)
 
 
-@receiver(full_product_save_admin, sender=Product, dispatch_uid="saveProductAdmin")
+@receiver(post_save, sender=Product, dispatch_uid="saveProduct")
+def create_product_seo_page(sender, instance, created, **kwargs):
+  if created:
+    seo_product_page, _ = SEOProductPage.objects.get_or_create(product=instance)
+
+
+@receiver(full_product_save_admin, sender=Product, dispatch_uid="fullProductSaveAdmin")
 def create_product_seo(sender, instance, changed, **kwargs):
   if changed:
     product = instance
