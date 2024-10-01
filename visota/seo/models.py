@@ -1,4 +1,9 @@
+import os
 from decimal import Decimal
+from typing import Iterable
+from django.conf import settings
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from parler.models import TranslatableModel, TranslatedFields
@@ -136,3 +141,42 @@ class MetaGenerationRule(TranslatableModel):
   class Meta:
     verbose_name = "правило генерации метатегов"
     verbose_name_plural = "правила генерации метатегов"
+
+
+class AbstractFile(models.Model):
+  name = models.CharField('название', max_length=30, unique=True)
+  content = models.TextField('код')
+
+  def __str__(self):
+    return self.name
+
+  class Meta:
+    abstract = True
+
+
+class JSFile(AbstractFile):
+    
+  class Meta:
+    verbose_name = "js"
+    verbose_name_plural = "js"
+
+  def save(self, *args, **kwargs):
+    os.makedirs(os.path.join(settings.STATIC_ROOT, 'seo', 'js'), exist_ok=True)
+    with open(os.path.join(settings.STATIC_ROOT, 'seo', 'js', self.name), 'w') as f:
+      file = File(f)
+      file.write(self.content)
+    super().save(*args, **kwargs)
+
+
+class CSSFile(AbstractFile):
+    
+  class Meta:
+    verbose_name = "css"
+    verbose_name_plural = "css"
+
+  def save(self, *args, **kwargs):
+    os.makedirs(os.path.join(settings.STATIC_ROOT, 'seo', 'css'), exist_ok=True)
+    with open(os.path.join(settings.STATIC_ROOT, 'seo', 'css', self.name), 'w') as f:
+      file = File(f)
+      file.write(self.content)
+    super().save(*args, **kwargs)

@@ -178,3 +178,37 @@ class MetaGenerationRuleAdmin(TranslatableAdmin):
     
     
 admin.site.register(MetaGenerationRule, MetaGenerationRuleAdmin)
+
+
+class JSFileAdmin(admin.ModelAdmin):
+  def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["name"]
+    else:
+        return []
+    
+  # def has_add_permission(self, request, obj=None):
+  #   return False
+    
+  # def has_delete_permission(self, request, obj=None):
+  #   return False
+    
+    
+admin.site.register(JSFile, JSFileAdmin)
+
+
+class CSSFileAdmin(admin.ModelAdmin):
+  def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["name"]
+    else:
+        return []
+    
+  # def has_add_permission(self, request, obj=None):
+  #   return False
+    
+  # def has_delete_permission(self, request, obj=None):
+  #   return False
+    
+    
+admin.site.register(CSSFile, CSSFileAdmin)
