@@ -145,7 +145,7 @@ class MetaGenerationRule(TranslatableModel):
 
 class AbstractFile(models.Model):
   name = models.CharField('название', max_length=30, unique=True)
-  content = models.TextField('код')
+  content = models.TextField('код', null=True, blank=True)
 
   def __str__(self):
     return self.name
