@@ -119,11 +119,19 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
         
     #     return Response(serializer.data)
 
+    def retrieve(self, request, slug=None, *args, **kwargs):
+        try:
+          cat = SubCategory.objects.get(translations__slug=slug)
+          return JsonResponse({"name": cat.name, "description": cat.description})
+        except SubCategory.DoesNotExist:
+          active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
+          return redirect(f'/{active_slug.to.slug}/', permanent=True)
+
     @action(detail=True)
     def exists(self, request, slug=None):
         try:
           cat = SubCategory.objects.get(translations__slug=slug)
-          return JsonResponse({"name": cat.name})
+          return JsonResponse({"name": cat.name, "description": cat.description})
         except SubCategory.DoesNotExist:
           active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
           return redirect(f'/{active_slug.to.slug}/', permanent=True)
