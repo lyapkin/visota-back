@@ -97,6 +97,44 @@ class SEOCategoryPageAdmin(TranslatableAdmin):
 admin.site.register(SEOCategoryPage, SEOCategoryPageAdmin)
 
 
+class SEOTagPageAdmin(TranslatableAdmin):
+  fieldsets = (
+    (None, {
+        'fields': ['tag', 'title', 'description', 'noindex_follow']
+    }),
+    ('Sitemap', {
+        'fields': ('change_freq', 'priority'),
+    }),
+  )
+  actions = ['generate_meta']
+
+  def get_readonly_fields(self, request, obj=None):
+    if obj:
+        return ["tag"]
+    else:
+        return []
+    
+  @admin.action(description="Сгенерировать метаданные")
+  def generate_meta(self, request, queryset):
+      rule = MetaGenerationRule.objects.get(type='tag')
+      for seo in queryset:
+        tag = seo.tag
+        for translation in tag.translations.all():
+          if rule.has_translation(translation.language_code):
+            rule.set_current_language(translation.language_code)
+            title = rule.title.format(name=translation.name)
+            description = rule.description.format(name=translation.name)
+          else:
+            title = translation.name
+            description = translation.name
+          seo.set_current_language(translation.language_code)
+          seo.title = title
+          seo.description = description
+        seo.save()
+    
+admin.site.register(SEOTagPage, SEOTagPageAdmin)
+
+
 class SEOProductPageAdmin(TranslatableAdmin):
   fieldsets = (
     (None, {

@@ -1,16 +1,16 @@
 from django.db.models.signals import post_save, m2m_changed
-from apps.products.signals import full_product_save_admin, full_category_save_admin
+from apps.products.signals import full_product_save_admin, full_category_save_admin, full_tag_save_admin
 from parler.signals import post_translation_save
 from django.dispatch import receiver
-from apps.products.models import SubCategory, Product, CharValue
+from apps.products.models import SubCategory, Product, CharValue, Tag
 from apps.blog.models import Post
-from seo.models import SEOCategoryPage, SEOProductPage, SEOPostPage, MetaGenerationRule
+from seo.models import SEOCategoryPage, SEOProductPage, SEOPostPage, MetaGenerationRule, SEOTagPage
 
 
 @receiver(post_save, sender=SubCategory, dispatch_uid="saveCategory")
 def create_category_seo_page(sender, instance, created, **kwargs):
   if created:
-    seo_product_page, _ = SEOCategoryPage.objects.get_or_create(product=instance)
+    seo_product_page, _ = SEOCategoryPage.objects.get_or_create(category=instance)
 
 
 @receiver(full_category_save_admin, sender=SubCategory, dispatch_uid="fullCategorySaveAdmin")
@@ -34,6 +34,35 @@ def create_category_seo(sender, instance, changed, **kwargs):
       seo_category_page.save_translation(translation)
     else:
       seo_category_page.create_translation(lang, title=title, description=description)
+
+
+@receiver(post_save, sender=Tag, dispatch_uid="saveTag")
+def create_tag_seo_page(sender, instance, created, **kwargs):
+  if created:
+    seo_tag_page, _ = SEOTagPage.objects.get_or_create(tag=instance)
+
+
+@receiver(full_tag_save_admin, sender=Tag, dispatch_uid="fullTagSaveAdmin")
+def create_tag_seo(sender, instance, changed, **kwargs):
+  if changed:
+    tag = instance
+    lang = instance.language_code
+    seo_tag_page, created = SEOTagPage.objects.get_or_create(tag=tag)
+    try:
+      rule = MetaGenerationRule.objects.get(type='tag', translations__language_code=lang)
+      title = rule.title.format(name=instance.name)
+      description = rule.description.format(name=instance.name)
+    except MetaGenerationRule.DoesNotExist:
+      title = instance.name
+      description = instance.name
+
+    if seo_tag_page.has_translation(language_code=lang):
+      translation = seo_tag_page.get_translation(lang)
+      translation.title = title
+      translation.description = description
+      seo_tag_page.save_translation(translation)
+    else:
+      seo_tag_page.create_translation(lang, title=title, description=description)
 
 
 @receiver(post_save, sender=Product, dispatch_uid="saveProduct")

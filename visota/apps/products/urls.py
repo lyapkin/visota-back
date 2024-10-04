@@ -7,6 +7,7 @@ from .views import *
 router = routers.SimpleRouter(trailing_slash=True)
 router.register('products', ProductApi)
 router.register('categories', CategoryApi)
+router.register('tags', TagApi)
 
 urlpatterns = [
     path('', include(router.urls)),

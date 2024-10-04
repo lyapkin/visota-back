@@ -11,6 +11,7 @@ from django.utils.translation import get_language
 
 from .models import *
 from .serializers import *
+from .mixins import FilterMixin
 
 class ProductAPIListPagination(PageNumberPagination):
     page_size = 12
@@ -20,7 +21,7 @@ class ProductAPIListPagination(PageNumberPagination):
         response.data['page_count'] = math.ceil(response.data['count'] / self.get_page_size(self.request))
         return response
     
-class ProductApi(viewsets.ReadOnlyModelViewSet):
+class ProductApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
     queryset = Product.objects.translated().order_by("-id")
     serializer_class = ProductSerializer
     pagination_class = ProductAPIListPagination
@@ -40,46 +41,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Product.objects.translated().order_by("translations__priority", 'id')
 
-        query_params = self.request.query_params
-
-        pks = query_params.getlist('pk')
-        if pks is not None and len(pks) > 0:
-            return queryset.filter(pk__in=pks)
-
-        # sub = query_params.get("sub")
-        # if sub is not None:
-        #     queryset = queryset.filter(sub_categories__slug=sub)
-
-        price_min = query_params.get('price_min')
-        price_max = query_params.get('price_max')
-        price_min_valid = True
-        price_max_valid = True
-
-        try:
-            price_min = int(price_min)
-        except:
-            price_min_valid = False
-
-        try:
-            price_max = int(price_max)
-        except:
-            price_max_valid = False
-
-
-        if price_max_valid and price_min_valid:
-            queryset = queryset.filter(current_price__range=[price_min, price_max])
-        elif price_max_valid:
-            queryset = queryset.filter(current_price__lte=price_max)
-        elif price_min_valid:
-            queryset = queryset.filter(current_price__gte=price_min)
-
-        searchline = query_params.get('search')
-        searchline = searchline.strip() if isinstance(searchline, str) else None
-        if searchline is not None:
-            searchline = searchline.split()
-            queryset = queryset.filter(*[Q(translations__name__icontains=q) for q in searchline])
-
-        return queryset
+        return self.filter(queryset=queryset)
 
     
     @action(detail=False)
@@ -97,7 +59,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet):
         return Response(status=404)
 
 
-class CategoryApi(viewsets.ReadOnlyModelViewSet):
+class CategoryApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
     queryset = Category.objects.translated().order_by('priority')
     serializer_class = CategorySerializer
     # pagination_class = ProductAPIListPagination
@@ -154,42 +116,36 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
     
 
-    def filter(self, queryset):
+class TagApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
+  queryset = Tag.objects.all()
+  serializer_class = TagSerializer
+  lookup_field = 'translations__slug'
+  lookup_url_kwarg = 'slug'
 
-        query_params = self.request.query_params
+  def get_queryset(self):
+    return super().get_queryset().filter(translations__language_code=get_language())
 
-        pks = query_params.getlist('pk')
-        if pks is not None and len(pks) > 0:
-            return queryset.filter(pk__in=pks)
+  def retrieve(self, request, slug=None, *args, **kwargs):
+    try:
+      tag = Tag.objects.get(translations__slug=slug)
+      return JsonResponse({"name": tag.name})
+    except Tag.DoesNotExist:
+      active_slug = get_object_or_404(TagRedirectFrom, lang=get_language(), old_slug=slug)
+      return redirect(f'/{active_slug.to.slug}/', permanent=True)
 
-        price_min = query_params.get('price_min')
-        price_max = query_params.get('price_max')
-        price_min_valid = True
-        price_max_valid = True
-
-        try:
-            price_min = int(price_min)
-        except:
-            price_min_valid = False
-
-        try:
-            price_max = int(price_max)
-        except:
-            price_max_valid = False
-
-
-        if price_max_valid and price_min_valid:
-            queryset = queryset.filter(current_price__range=[price_min, price_max])
-        elif price_max_valid:
-            queryset = queryset.filter(current_price__lte=price_max)
-        elif price_min_valid:
-            queryset = queryset.filter(current_price__gte=price_min)
-
-        searchline = query_params.get('search')
-        searchline = searchline.strip() if isinstance(searchline, str) else None
-        if searchline is not None:
-            searchline = searchline.split()
-            queryset = queryset.filter(*[Q(translations__name__icontains=q) for q in searchline])
-
-        return queryset
+  @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
+  def products(self, request, slug=None):
+    tag = get_object_or_404(Tag, translations__slug=slug)
     
+    products = tag.products.translated().all()
+
+    products = self.filter(products)
+
+    page = self.paginate_queryset(products)
+    if page is not None:
+      serializer = self.get_serializer(page, many=True)
+      return self.get_paginated_response(serializer.data)
+
+    serializer = self.get_serializer(products, many=True)
+    
+    return Response(serializer.data)

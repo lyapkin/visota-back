@@ -5,7 +5,7 @@ from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRel
 from parler.forms import TranslatableModelForm
 
 # Register your models here.
-from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom
+from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom, Tag, TagRedirectFrom
 from .signals import full_product_save_admin, full_category_save_admin
 
 # Register your models here.
@@ -56,12 +56,12 @@ class ProductRedirectFromInline(admin.TabularInline):
   extra = 1
 
 class ProductAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'sub_categories', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'priority']
+    fields = ['name', 'slug', 'sub_categories', 'tags', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'priority']
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [CharachterInline, ImgInline, ProductRedirectFromInline]
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
-    filter_horizontal = ("sub_categories",)
+    filter_horizontal = ("sub_categories", "tags")
 
     def get_queryset(self, request):
         # Limit to a single language!
@@ -116,6 +116,29 @@ class SubCategoryAdmin(TranslatableAdmin):
     #   receivers = full_category_save_admin.send(sender=SubCategory, instance=form.instance, changed=changed)
 
 
+class TagRedirectFromInline(admin.TabularInline):
+  model = TagRedirectFrom
+  extra = 1
+
+class TagAdmin(TranslatableAdmin):
+    fields = ['name', 'slug']
+    list_display = ["name"]
+    inlines = (TagRedirectFromInline,)
+
+    def get_queryset(self, request):
+        # Limit to a single language!
+        language_code = self.get_queryset_language(request)
+        return super(TagAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
+
+    # def save_related(self, request, form, formsets, change):
+    #   super().save_related(request, form, formsets, change)
+    #   changed = False
+    #   for d in form.changed_data:
+    #     if d == 'name':
+    #        changed = True
+    #   receivers = full_tag_save_admin.send(sender=Tag, instance=form.instance, changed=changed)
+
+
 class CharValueAdmin(TranslatableAdmin):
     list_display = ['product', 'key', 'value']
     # fields = ['value']
@@ -131,4 +154,5 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(CharValue, CharValueAdmin)
+admin.site.register(Tag, TagAdmin)
 # admin.site.register(CharValue)

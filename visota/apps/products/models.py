@@ -35,15 +35,25 @@ class ProductRedirectFrom(models.Model):
   old_slug = models.CharField("старый url", max_length=60, unique=True)
   lang = models.CharField('языковая версия продукта старого url', max_length=2, choices=settings.LANGUAGES, default='ru')
 
-  # class Meta:
-  #   constraints = [
-  #     models.UniqueConstraint(fields=['old_slug', 'lang'], name='unique_slug_for_lang'),
-  #   ]
-
   def __str__(self):
     product = self.to
     product.set_current_language('ru')
     return f'язык: {self.lang}; старый слаг: {self.old_slug}; к: {product.name}'
+    
+  class Meta:
+    verbose_name = "Старый слаг (редирект (seo))"
+    verbose_name_plural = "Старые слаги (редирект (seo))"
+
+
+class TagRedirectFrom(models.Model):
+  to = models.ForeignKey('Tag', on_delete=models.CASCADE)
+  old_slug = models.CharField("старый url", max_length=60, unique=True)
+  lang = models.CharField('языковая версия тега старого url', max_length=2, choices=settings.LANGUAGES, default='ru')
+
+  def __str__(self):
+    tag = self.to
+    tag.set_current_language('ru')
+    return f'язык: {self.lang}; старый слаг: {self.old_slug}; к: {tag.name}'
     
   class Meta:
     verbose_name = "Старый слаг (редирект (seo))"
@@ -64,7 +74,6 @@ class Category(TranslatableModel):
     class Meta:
         verbose_name = "группа категории"
         verbose_name_plural = "группы категорий"
-        # ordering = ('translations__name',)
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
@@ -95,11 +104,36 @@ class SubCategory(TranslatableModel):
     class Meta:
         verbose_name = "категория"
         verbose_name_plural = "категории"
-        # ordering = ('translations__name',)
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
             self.slug = generate_unique_slug_translated(SubCategory, SubCategory.categoryredirectfrom_set.rel.related_model, self.name)
+        return super().save(*args, **kwargs)
+    
+
+def validate_is_tag_slug_old(value):
+  result = TagRedirectFrom.objects.filter(old_slug=value).exists()
+  if result:
+      raise ValidationError('Этот slug уже использовался')
+
+
+class Tag(TranslatableModel):
+    translations = TranslatedFields(
+      name = models.CharField("название тега", max_length=50, unique=True),
+      slug = models.SlugField("url", max_length=60, unique=True, blank=True, validators=[validate_is_tag_slug_old]),
+      last_modified = models.DateField(auto_now=True)
+    )
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "тег"
+        verbose_name_plural = "теги"
+
+    def save(self, *args, **kwargs):
+        if not self.slug.strip():
+            self.slug = generate_unique_slug_translated(Tag, Tag.tagredirectfrom_set.rel.related_model, self.name)
         return super().save(*args, **kwargs)
 
 
@@ -119,9 +153,9 @@ class Product(TranslatableModel):
     )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='категория товара')
+    tags = models.ManyToManyField(Tag, related_name='products', verbose_name='теги')
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
-    # description = models.TextField('описание товара')
     is_present = models.BooleanField('в наличии', default=False)
 
     def __str__(self):
@@ -130,7 +164,6 @@ class Product(TranslatableModel):
     class Meta:
         verbose_name = "товар"
         verbose_name_plural = "товары"
-        # ordering = ('translations__name',)
 
     def save(self, *args, **kwargs):
         if not self.slug.strip():
@@ -177,10 +210,4 @@ class ProductImg(models.Model):
     
 #     class Meta:
 #         verbose_name = "документ товара"
-#         verbose_name_plural = "документы товара"   
-
-
-
-
-
-
+#         verbose_name_plural = "документы товара"

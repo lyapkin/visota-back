@@ -7,7 +7,7 @@ from django.core.files.base import ContentFile
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from parler.models import TranslatableModel, TranslatedFields
-from apps.products.models import SubCategory, Product
+from apps.products.models import SubCategory, Product, Tag
 from apps.blog.models import Post
 
 # Create your models here.
@@ -82,6 +82,26 @@ class SEOCategoryPage(TranslatableModel):
     verbose_name_plural = "SEO для категорий"
 
 
+class SEOTagPage(TranslatableModel):
+  tag = models.OneToOneField(Tag, verbose_name='тег', related_name='seo', on_delete=models.CASCADE, primary_key=True)
+  translations = TranslatedFields(
+    title = models.CharField("title", max_length=255),
+    description = models.TextField('description'),
+    noindex_follow = models.BooleanField('<meta name="robots" content="noindex, follow">', default=False),
+    change_freq = models.CharField('changefreq', max_length=7, choices=CHANGE_FREQ_CHOICES, default='yearly'),
+    priority = models.DecimalField('priority', max_digits=2, decimal_places=1, validators=[MinValueValidator(Decimal('0.1')), MaxValueValidator(Decimal('1.0'))], default=1.0)
+  )
+
+  sitemap = models.ForeignKey(Sitemap, related_name='tags', on_delete=models.PROTECT, default=1)
+
+  def __str__(self):
+    return self.tag.name
+    
+  class Meta:
+    verbose_name = "SEO для тегов"
+    verbose_name_plural = "SEO для тегов"
+
+
 class SEOProductPage(TranslatableModel):
   product = models.OneToOneField(Product, verbose_name='Товар', related_name='seo', on_delete=models.CASCADE, primary_key=True)
   translations = TranslatedFields(
@@ -125,7 +145,8 @@ class SEOPostPage(TranslatableModel):
 class MetaGenerationRule(TranslatableModel):
   choices = {
     'ctg': 'Категория',
-    'prd': 'Товар'
+    'prd': 'Товар',
+    'tag': 'Тег'
   }
 
   type = models.CharField('тип', max_length=3, choices=choices)

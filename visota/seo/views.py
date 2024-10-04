@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from rest_framework import viewsets, generics, mixins
 from .models import *
-from .serializers import SEOStaticPageSerializer, SEOCategoryPageSerializer, SEOProductPageSerializer, SEOPostPageSerializer, SitemapSerializer
+from .serializers import SEOStaticPageSerializer, SEOCategoryPageSerializer, SEOTagPageSerializer, SEOProductPageSerializer, SEOPostPageSerializer, SitemapSerializer
 
 # Create your views here.
 def robots(req):
@@ -18,6 +18,12 @@ class MetaCategoryApi(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
   queryset = SEOCategoryPage.objects.translated()
   serializer_class = SEOCategoryPageSerializer
   lookup_field = 'category__translations__slug'
+
+
+class MetaTagApi(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+  queryset = SEOTagPage.objects.translated()
+  serializer_class = SEOTagPageSerializer
+  lookup_field = 'tag__translations__slug'
 
 
 class MetaProductApi(viewsets.GenericViewSet, mixins.RetrieveModelMixin):

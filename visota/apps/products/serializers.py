@@ -90,7 +90,23 @@ class SubcategorySerializer(TranslatableModelSerializer):
 
     def to_representation(self, instance):
         if instance.has_translation(instance.get_current_language()):
+          representation = super().to_representation(instance)
+          representation['slug'] = representation['translations'][instance.get_current_language()]['slug']
           return super().to_representation(instance)
+        
+
+class TagSerializer(TranslatableModelSerializer):
+    # translations = TranslatedFieldsField(shared_model=Tag)
+
+    class Meta:
+      model = Tag
+      fields = ('id', 'name', 'slug')
+
+    # def to_representation(self, instance):
+    #   representation = super().to_representation(instance)
+    #   representation['slug'] = representation['translations'][instance.get_current_language()]['slug']
+    #   representation['name'] = representation['translations'][instance.get_current_language()]['name']
+    #   return super().to_representation(instance)
         
 
 
