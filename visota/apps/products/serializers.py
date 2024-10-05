@@ -79,20 +79,39 @@ class ProductSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
+class FilterSerializer(TranslatableModelSerializer):
+  translations = TranslatedFieldsField(shared_model=Filter)
+    
+  class Meta:
+    model = Filter
+    fields = ('id', 'name', 'slug', 'translations')
+
+  def to_representation(self, instance):
+    if instance.has_translation(instance.get_current_language()):
+      representation = super().to_representation(instance)
+      representation['name'] = representation['translations'][instance.get_current_language()]['name']
+      representation['slug'] = representation['translations'][instance.get_current_language()]['slug']
+      del representation['translations']
+      
+      return representation
+
+
 class SubcategorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(shared_model=SubCategory)
     # img = serializers.CharField(source='img.url')
     img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
+    filters = FilterSerializer(many=True)
 
     class Meta:
         model = SubCategory
-        fields = ('id', 'slug', 'translations', 'img')
+        fields = ('id', 'slug', 'translations', 'img', 'filters')
 
     def to_representation(self, instance):
         if instance.has_translation(instance.get_current_language()):
           representation = super().to_representation(instance)
           representation['slug'] = representation['translations'][instance.get_current_language()]['slug']
-          return super().to_representation(instance)
+          representation['filters'] = [filter for filter in representation['filters'] if filter is not None]
+          return representation
         
 
 class TagSerializer(TranslatableModelSerializer):

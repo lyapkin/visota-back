@@ -5,7 +5,7 @@ from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRel
 from parler.forms import TranslatableModelForm
 
 # Register your models here.
-from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom, Tag, TagRedirectFrom
+from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom, Tag, TagRedirectFrom, Filter
 from .signals import full_product_save_admin, full_category_save_admin
 
 # Register your models here.
@@ -56,12 +56,12 @@ class ProductRedirectFromInline(admin.TabularInline):
   extra = 1
 
 class ProductAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'sub_categories', 'tags', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'priority']
+    fields = ['name', 'slug', 'sub_categories', 'tags', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'filters', 'priority']
     list_display = ["name", "code", 'actual_price', 'current_price']
     inlines = [CharachterInline, ImgInline, ProductRedirectFromInline]
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
-    filter_horizontal = ("sub_categories", "tags")
+    filter_horizontal = ("sub_categories", "tags", "filters")
 
     def get_queryset(self, request):
         # Limit to a single language!
@@ -98,9 +98,10 @@ class CategoryRedirectFromInline(admin.TabularInline):
   extra = 1
 
 class SubCategoryAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'category', 'img', 'description', 'priority']
+    fields = ['name', 'slug', 'category', 'filters', 'img', 'description', 'priority']
     list_display = ["name", 'category']
     inlines = (CategoryRedirectFromInline,)
+    filter_horizontal = ("filters",)
 
     def get_queryset(self, request):
         # Limit to a single language!
@@ -139,6 +140,16 @@ class TagAdmin(TranslatableAdmin):
     #   receivers = full_tag_save_admin.send(sender=Tag, instance=form.instance, changed=changed)
 
 
+class FilterAdmin(TranslatableAdmin):
+    fields = ['name', 'slug']
+    list_display = ["name"]
+
+    # def get_queryset(self, request):
+    #     # Limit to a single language!
+    #     language_code = self.get_queryset_language(request)
+    #     return super(TagAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
+
+
 class CharValueAdmin(TranslatableAdmin):
     list_display = ['product', 'key', 'value']
     # fields = ['value']
@@ -155,4 +166,5 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(CharValue, CharValueAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(Filter, FilterAdmin)
 # admin.site.register(CharValue)

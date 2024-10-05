@@ -101,8 +101,12 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
     @action(detail=True, serializer_class=ProductSerializer, pagination_class = ProductAPIListPagination)
     def products(self, request, slug=None):
         category = get_object_or_404(SubCategory, translations__slug=slug)
-        
-        products = category.products.translated().all()
+
+        products = category.products.filter(translations__language_code=get_language())
+
+        filters = self.request.query_params.getlist('filters')
+        if filters is not None and len(filters) > 0:
+          products = products.filter(filters__translations__slug__in=filters)
 
         products = self.filter(products)
 

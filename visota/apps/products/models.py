@@ -60,6 +60,25 @@ class TagRedirectFrom(models.Model):
     verbose_name_plural = "Старые слаги (редирект (seo))"
 
 
+class Filter(TranslatableModel):
+  translations = TranslatedFields(
+     name = models.CharField("название фильтра", max_length=50, unique=True),
+     slug = models.SlugField("slug", max_length=60, unique=True, blank=True),
+  )
+
+  def __str__(self):
+    return self.name
+    
+  class Meta:
+    verbose_name = "фильтр"
+    verbose_name_plural = "фильтры"
+
+  def save(self, *args, **kwargs):
+    if not self.slug.strip():
+      self.slug = generate_unique_slug_translated(Filter, None, self.name)
+    return super().save(*args, **kwargs)
+
+
 class Category(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField("название группы", max_length=50, unique=True)
@@ -97,6 +116,8 @@ class SubCategory(TranslatableModel):
     category = models.ForeignKey(Category, models.CASCADE, related_name='subcategories', verbose_name='группа')
     priority = models.PositiveSmallIntegerField('позиция в фильтре каталога', default=32000)
     img = models.ImageField("картинка категории", upload_to=upload_category_img_to, null=True)
+
+    filters = models.ManyToManyField(Filter, related_name='categories', verbose_name='фильтры')
 
     def __str__(self):
         return self.name
@@ -157,6 +178,8 @@ class Product(TranslatableModel):
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     is_present = models.BooleanField('в наличии', default=False)
+
+    filters = models.ManyToManyField(Filter, related_name='products', verbose_name='фильтры')
 
     def __str__(self):
         return self.name
