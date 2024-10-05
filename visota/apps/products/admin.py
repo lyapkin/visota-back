@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.utils.translation import get_language
 from django import forms
+from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRelatedFieldListFilter
 from parler.forms import TranslatableModelForm
@@ -62,11 +64,6 @@ class ProductAdmin(TranslatableAdmin):
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
     filter_horizontal = ("sub_categories", "tags", "filters")
-
-    def get_queryset(self, request):
-        # Limit to a single language!
-        language_code = self.get_queryset_language(request)
-        return super(ProductAdmin, self).get_queryset(request).translated(language_code)
     
     # def save_related(self, request, form, formsets, change):
     #   super().save_related(request, form, formsets, change)

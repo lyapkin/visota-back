@@ -176,8 +176,8 @@ PARLER_LANGUAGES = {
         {'code': 'zh'},
     ),
     'default': {
-        'fallbacks': ['ru'],
-        'hide_untranslated': True,
+        'fallbacks': ['ru', 'en', 'tr', 'zh'],
+        'hide_untranslated': False,
     }
 }
 
