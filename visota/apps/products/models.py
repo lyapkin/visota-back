@@ -178,6 +178,7 @@ class Product(TranslatableModel):
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     is_present = models.BooleanField('в наличии', default=False)
+    views = models.PositiveIntegerField('просмотры', default=0)
 
     filters = models.ManyToManyField(Filter, related_name='products', verbose_name='фильтры')
 

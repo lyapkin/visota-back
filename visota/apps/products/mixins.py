@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, F
 
 
 class FilterMixin():
@@ -38,4 +38,15 @@ class FilterMixin():
         searchline = searchline.split()
         queryset = queryset.filter(*[Q(translations__name__icontains=q) for q in searchline])
 
-    return queryset
+    sort = query_params.get('sort')
+    desc = query_params.get('desc')
+    if sort is None or sort == 'default':
+      return queryset.order_by('translations__priority', 'id')
+    if sort == 'price':
+      sortQuery = F('current_price').asc(nulls_last=True) if desc is None else F('current_price').desc(nulls_last=True)
+    elif sort == 'name':
+      sortQuery = 'translations__name' if desc is None else '-translations__name'
+    elif sort == 'popularity':
+      sortQuery = 'views' if desc is None else '-views'
+    
+    return queryset.order_by(sortQuery, 'translations__priority', 'id')

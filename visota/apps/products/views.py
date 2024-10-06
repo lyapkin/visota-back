@@ -6,7 +6,7 @@ from rest_framework import viewsets, generics, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.translation import get_language
 
 from .models import *
@@ -35,6 +35,8 @@ class ProductApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
         except Http404:
           active_slug = get_object_or_404(ProductRedirectFrom, lang=get_language(), old_slug=slug)
           return redirect(f'/{active_slug.to.slug}/', permanent=True)
+        instance.views = F('views') + 1
+        instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
