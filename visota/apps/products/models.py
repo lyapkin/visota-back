@@ -174,13 +174,13 @@ class Product(TranslatableModel):
     )
     code = models.CharField("артикул", max_length=20, unique=True, null=True, blank=True)
     sub_categories = models.ManyToManyField(SubCategory, related_name='products', verbose_name='категория товара')
-    tags = models.ManyToManyField(Tag, related_name='products', verbose_name='теги')
+    tags = models.ManyToManyField(Tag, related_name='products', verbose_name='теги', blank=True)
     actual_price = models.PositiveIntegerField('цена', null=True, blank=True)
     current_price = models.PositiveIntegerField('текущая цена (со скидкой)', null=True, blank=True)
     is_present = models.BooleanField('в наличии', default=False)
     views = models.PositiveIntegerField('просмотры', default=0)
 
-    filters = models.ManyToManyField(Filter, related_name='products', verbose_name='фильтры')
+    filters = models.ManyToManyField(Filter, related_name='products', verbose_name='фильтры', blank=True)
 
     def __str__(self):
         return self.name
