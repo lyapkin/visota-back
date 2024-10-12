@@ -25,114 +25,111 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    "http://localhost:3000",
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'https://localhost:3000',
-    'http://localhost:8000',
-    'https://localhost:8000',
-    'http://79.174.83.16',
-    'https://79.174.83.16',
-    'http://visota13.ru',
-    'https://visota13.ru',
-    'http://www.visota13.ru',
-    'https://www.visota13.ru'
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://localhost:8000",
+    "https://localhost:8000",
+    "http://79.174.83.16",
+    "https://79.174.83.16",
+    "http://visota13.ru",
+    "https://visota13.ru",
+    "http://www.visota13.ru",
+    "https://www.visota13.ru",
 ]
 
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
-
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'rest_framework',
-    'corsheaders',
-    'django_ckeditor_5',
-    'parler',
-    'ckeditor',
-    'ckeditor_uploader',
-
-    'common',
-    'seo',
-
-    'apps.blog',
-    'apps.products',
-    'apps.vacancies',
-    'apps.faq',
-    'apps.our_projects',
-    'apps.promos',
-    'apps.requests',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "corsheaders",
+    "django_ckeditor_5",
+    "parler",
+    "ckeditor",
+    "ckeditor_uploader",
+    "smart_selects",
+    "common",
+    "seo",
+    "apps.blog",
+    "apps.products",
+    "apps.vacancies",
+    "apps.faq",
+    "apps.our_projects",
+    "apps.promos",
+    "apps.requests",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'visota.urls'
+ROOT_URLCONF = "visota.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'visota.wsgi.application'
+WSGI_APPLICATION = "visota.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -142,16 +139,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -159,29 +156,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = "ru"
 
-LANGUAGES = (
-    ('ru', 'Русский'),
-    ('en', 'Английский'),
-    ('tr', 'Турецкий'),
-    ('zh', 'Китайский')
-)
+LANGUAGES = (("ru", "Русский"), ("en", "Английский"), ("tr", "Турецкий"), ("zh", "Китайский"))
 
 PARLER_LANGUAGES = {
     None: (
-        {'code': 'ru'},
-        {'code': 'en'},
-        {'code': 'tr'},
-        {'code': 'zh'},
+        {"code": "ru"},
+        {"code": "en"},
+        {"code": "tr"},
+        {"code": "zh"},
     ),
-    'default': {
-        'fallbacks': ['ru', 'en', 'tr', 'zh'],
-        'hide_untranslated': False,
-    }
+    "default": {
+        "fallbacks": ["ru", "en", "tr", "zh"],
+        "hide_untranslated": False,
+    },
 }
 
-TIME_ZONE = 'Asia/Yekaterinburg'
+TIME_ZONE = "Asia/Yekaterinburg"
 
 USE_I18N = True
 
@@ -191,211 +183,220 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles'),
+    os.path.join(BASE_DIR, "staticfiles"),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # CKEditor5
 customColorPalette = [
-    {
-        'color': 'hsl(4, 90%, 58%)',
-        'label': 'Red'
-    },
-    {
-        'color': 'hsl(340, 82%, 52%)',
-        'label': 'Pink'
-    },
-    {
-        'color': 'hsl(291, 64%, 42%)',
-        'label': 'Purple'
-    },
-    {
-        'color': 'hsl(262, 52%, 47%)',
-        'label': 'Deep Purple'
-    },
-    {
-        'color': 'hsl(231, 48%, 48%)',
-        'label': 'Indigo'
-    },
-    {
-        'color': 'hsl(207, 90%, 54%)',
-        'label': 'Blue'
-    },
+    {"color": "hsl(4, 90%, 58%)", "label": "Red"},
+    {"color": "hsl(340, 82%, 52%)", "label": "Pink"},
+    {"color": "hsl(291, 64%, 42%)", "label": "Purple"},
+    {"color": "hsl(262, 52%, 47%)", "label": "Deep Purple"},
+    {"color": "hsl(231, 48%, 48%)", "label": "Indigo"},
+    {"color": "hsl(207, 90%, 54%)", "label": "Blue"},
 ]
 
-CKEDITOR_5_CUSTOM_CSS = 'css/ckeditor5/admin_dark_mode_fix.css' # optional
-CKEDITOR_5_FILE_STORAGE = "common.utils.CustomStorage" # optional
+CKEDITOR_5_CUSTOM_CSS = "css/ckeditor5/admin_dark_mode_fix.css"  # optional
+CKEDITOR_5_FILE_STORAGE = "common.utils.CustomStorage"  # optional
 CKEDITOR_5_CONFIGS = {
-    'default': {
-        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
-                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
-        'language': 'ru',
-
-    },
-    'extends': {
-        'blockToolbar': [
-            'paragraph', 'heading1', 'heading2', 'heading3',
-            '|',
-            'bulletedList', 'numberedList',
-            '|',
-            'blockQuote',
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "blockQuote",
+            "imageUpload",
         ],
-        'toolbar': ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough',
-        '|', 'sourceEditing', 
-                    # 'insertImage',
-                    'bulletedList', 'numberedList', '|', 
-                    # 'imageUpload', '|',
-                    # 'mediaEmbed',
-                    'insertTable',],
-        'image': {
-            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
-                        'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
-            'styles': [
-                'full',
-                'side',
-                'alignLeft',
-                'alignRight',
-                'alignCenter',
+        "language": "ru",
+    },
+    "extends": {
+        "blockToolbar": [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "blockQuote",
+        ],
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "|",
+            "sourceEditing",
+            # 'insertImage',
+            "bulletedList",
+            "numberedList",
+            "|",
+            # 'imageUpload', '|',
+            # 'mediaEmbed',
+            "insertTable",
+        ],
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "|",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "imageStyle:side",
+                "|",
+            ],
+            "styles": [
+                "full",
+                "side",
+                "alignLeft",
+                "alignRight",
+                "alignCenter",
+            ],
+        },
+        "table": {
+            "contentToolbar": ["tableColumn", "tableRow", "mergeTableCells", "tableProperties", "tableCellProperties"],
+            "tableProperties": {"borderColors": customColorPalette, "backgroundColors": customColorPalette},
+            "tableCellProperties": {"borderColors": customColorPalette, "backgroundColors": customColorPalette},
+        },
+        "heading": {
+            "options": [
+                {"model": "paragraph", "title": "Параграф", "class": "ck-heading_paragraph"},
+                {"model": "heading1", "view": "h1", "title": "Заголовок 1", "class": "ck-heading_heading1"},
+                {"model": "heading2", "view": "h2", "title": "Заголовок 2", "class": "ck-heading_heading2"},
+                {"model": "heading3", "view": "h3", "title": "Заголовок 3", "class": "ck-heading_heading3"},
             ]
-
         },
-        'table': {
-            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells',
-            'tableProperties', 'tableCellProperties' ],
-            'tableProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            },
-            'tableCellProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            }
-        },
-        'heading' : {
-            'options': [
-                { 'model': 'paragraph', 'title': 'Параграф', 'class': 'ck-heading_paragraph' },
-                { 'model': 'heading1', 'view': 'h1', 'title': 'Заголовок 1', 'class': 'ck-heading_heading1' },
-                { 'model': 'heading2', 'view': 'h2', 'title': 'Заголовок 2', 'class': 'ck-heading_heading2' },
-                { 'model': 'heading3', 'view': 'h3', 'title': 'Заголовок 3', 'class': 'ck-heading_heading3' }
-            ]
-        },
-        'mediaEmbed': {
-            'previewsInData': True,
+        "mediaEmbed": {
+            "previewsInData": True,
             # 'extraProviders' : [
             #     {
             #         'name': 'vk',
             #         'url': r'^vk\.com/(\w+)'
             #     }
             # ]
-        }
+        },
     },
-    'extends2': {
-        'blockToolbar': [
-            'paragraph', 'heading1', 'heading2', 'heading3',
-            '|',
-            'bulletedList', 'numberedList',
-            '|',
-            'blockQuote',
+    "extends2": {
+        "blockToolbar": [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "blockQuote",
         ],
-        'toolbar': ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough',
-        '|', 'sourceEditing', 
-                    'insertImage',
-                    'bulletedList', 'numberedList', '|', 
-                    # 'imageUpload', '|',
-                    # 'mediaEmbed',
-                    'insertTable',],
-        'image': {
-            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
-                        'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
-            'styles': [
-                'full',
-                'side',
-                'alignLeft',
-                'alignRight',
-                'alignCenter',
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "|",
+            "sourceEditing",
+            "insertImage",
+            "bulletedList",
+            "numberedList",
+            "|",
+            # 'imageUpload', '|',
+            # 'mediaEmbed',
+            "insertTable",
+        ],
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "|",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "imageStyle:side",
+                "|",
+            ],
+            "styles": [
+                "full",
+                "side",
+                "alignLeft",
+                "alignRight",
+                "alignCenter",
+            ],
+        },
+        "table": {
+            "contentToolbar": ["tableColumn", "tableRow", "mergeTableCells", "tableProperties", "tableCellProperties"],
+            "tableProperties": {"borderColors": customColorPalette, "backgroundColors": customColorPalette},
+            "tableCellProperties": {"borderColors": customColorPalette, "backgroundColors": customColorPalette},
+        },
+        "heading": {
+            "options": [
+                {"model": "paragraph", "title": "Параграф", "class": "ck-heading_paragraph"},
+                {"model": "heading1", "view": "h1", "title": "Заголовок 1", "class": "ck-heading_heading1"},
+                {"model": "heading2", "view": "h2", "title": "Заголовок 2", "class": "ck-heading_heading2"},
+                {"model": "heading3", "view": "h3", "title": "Заголовок 3", "class": "ck-heading_heading3"},
             ]
-
         },
-        'table': {
-            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells',
-            'tableProperties', 'tableCellProperties' ],
-            'tableProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            },
-            'tableCellProperties': {
-                'borderColors': customColorPalette,
-                'backgroundColors': customColorPalette
-            }
-        },
-        'heading' : {
-            'options': [
-                { 'model': 'paragraph', 'title': 'Параграф', 'class': 'ck-heading_paragraph' },
-                { 'model': 'heading1', 'view': 'h1', 'title': 'Заголовок 1', 'class': 'ck-heading_heading1' },
-                { 'model': 'heading2', 'view': 'h2', 'title': 'Заголовок 2', 'class': 'ck-heading_heading2' },
-                { 'model': 'heading3', 'view': 'h3', 'title': 'Заголовок 3', 'class': 'ck-heading_heading3' }
-            ]
-        },
-        'mediaEmbed': {
-            'previewsInData': True,
+        "mediaEmbed": {
+            "previewsInData": True,
             # 'extraProviders' : [
             #     {
             #         'name': 'vk',
             #         'url': r'^vk\.com/(\w+)'
             #     }
             # ]
+        },
+    },
+    "list": {
+        "properties": {
+            "styles": "true",
+            "startIndex": "true",
+            "reversed": "true",
         }
     },
-    'list': {
-        'properties': {
-            'styles': 'true',
-            'startIndex': 'true',
-            'reversed': 'true',
-        }
-    }
 }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_CONFIGS = {
-    'default': {
+    "default": {
         "removePlugins": "stylesheetparser",
-        'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic']
-        ],
-        'toolbar_YourCustomToolbarConfig': [
-            {'name': 'styles', 'items': ['Format']},
-            {'name': 'basicstyles',
-             'items': ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat']},
-            {'name': 'document', 'items': ['Source', 'NumberedList', 'BulletedList', 'Table', 'Image']},
-            {'name': 'clipboard', 'items': ['Undo', 'Redo']},
-            {'name': 'editing', 'items': ['Find', '-', 'SelectAll', 'Maximize', 'ShowBlocks']},
-            '/',
+        "toolbar_Basic": [["Source", "-", "Bold", "Italic"]],
+        "toolbar_YourCustomToolbarConfig": [
+            {"name": "styles", "items": ["Format"]},
+            {"name": "basicstyles", "items": ["Bold", "Italic", "Underline", "Strike", "-", "RemoveFormat"]},
+            {"name": "document", "items": ["Source", "NumberedList", "BulletedList", "Table", "Image"]},
+            {"name": "clipboard", "items": ["Undo", "Redo"]},
+            {"name": "editing", "items": ["Find", "-", "SelectAll", "Maximize", "ShowBlocks"]},
+            "/",
             # {'name': 'paragraph',
             #  'items': ['NumberedList', 'BulletedList']},
             # {'name': 'links', 'items': ['Link', 'Unlink']},
             # {'name': 'insert',
             #  'items': ['Image', 'Table', 'HorizontalRule']},
-            '/',
+            "/",
             # {'name': 'styles', 'items': ['Format']},
             # {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
         ],
-        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
+        "toolbar": "YourCustomToolbarConfig",  # put selected toolbar config here
         # 'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
         # 'height': 291,
         # 'width': '100%',
@@ -403,62 +404,56 @@ CKEDITOR_CONFIGS = {
         # 'filebrowserWindowWidth': 940,
         # 'toolbarCanCollapse': True,
         # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
-        'format_tags': 'p;h1;h2;h3',
-        'tabSpaces': 4,
-        'extraPlugins': ','.join([
-            # 'widget','widgetselection','clipboard','lineutils',
-            'preview',
-        ]),
-        'extraAllowedContent': 'iframe[*]'
+        "format_tags": "p;h1;h2;h3",
+        "tabSpaces": 4,
+        "extraPlugins": ",".join(
+            [
+                # 'widget','widgetselection','clipboard','lineutils',
+                "preview",
+            ]
+        ),
+        "extraAllowedContent": "iframe[*]",
     }
 }
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.jino.ru'
+EMAIL_HOST = "smtp.jino.ru"
 EMAIL_PORT = 465
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 # EMAIL_USE_TLS = True
 EMAIL_USE_SSL = True
 
-DEFAULT_FROM_EMAIL = f'Высота {EMAIL_HOST_USER}'
+DEFAULT_FROM_EMAIL = f"Высота {EMAIL_HOST_USER}"
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
 
-
 # Celery
-REDIS_HOST = 'localhost'
-REDIS_PORT = '6379'
-CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+REDIS_HOST = "localhost"
+REDIS_PORT = "6379"
+CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 3600}
+CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 
-
-
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": "localhost",
+        "PORT": "",
     }
 }
 
-SITE_DOMAIN = ''
+SITE_DOMAIN = ""
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    )
-}
+REST_FRAMEWORK = {"DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",)}

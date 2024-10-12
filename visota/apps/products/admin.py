@@ -1,13 +1,26 @@
 from django.contrib import admin
-from django.utils.translation import get_language
-from django import forms
-from django.db.models.query import QuerySet
-from django.http import HttpRequest
-from parler.admin import TranslatableAdmin, TranslatableTabularInline, SortedRelatedFieldListFilter
-from parler.forms import TranslatableModelForm
+from django.core.exceptions import ValidationError
+from parler.admin import (
+    TranslatableAdmin,
+    TranslatableTabularInline,
+    TranslatableBaseInlineFormSet,
+)
 
 # Register your models here.
-from .models import Product, Category, SubCategory, CharValue, ProductImg, CategoryRedirectFrom, ProductRedirectFrom, Tag, TagRedirectFrom, Filter
+from .models import (
+    Product,
+    Category,
+    SubCategory,
+    CharValue,
+    ProductImg,
+    CategoryRedirectFrom,
+    ProductRedirectFrom,
+    Tag,
+    TagRedirectFrom,
+    ProductCharacteristic,
+    Characteristic,
+    CharacteristicValue,
+)
 from .signals import full_product_save_admin, full_category_save_admin
 
 # Register your models here.
@@ -21,7 +34,7 @@ class ImgInline(admin.TabularInline):
         formset = super().get_formset(request, obj=None, **kwargs)
         formset.validate_min = True
         return formset
-    
+
 
 class CharachterInline(TranslatableTabularInline):
     model = CharValue
@@ -53,18 +66,49 @@ class CharachterInline(TranslatableTabularInline):
 #         )
 
 
+class CharacteristicInline(admin.TabularInline):
+    model = ProductCharacteristic
+
+    def get_formset(self, request, obj=None, **kwargs):
+        fs = super().get_formset(request, obj, **kwargs)
+        fs.form.base_fields["characteristic_value"].widget.can_add_related = False
+        fs.form.base_fields["characteristic_value"].widget.can_change_related = False
+        # fs.form.base_fields['some_field'].widget.can_delete_related = False
+        return fs
+
+
 class ProductRedirectFromInline(admin.TabularInline):
-  model = ProductRedirectFrom
-  extra = 1
+    model = ProductRedirectFrom
+    extra = 1
+
 
 class ProductAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'sub_categories', 'tags', 'code', 'actual_price', 'current_price', 'is_present', 'description', 'filters', 'priority']
-    list_display = ["name", "code", 'actual_price', 'current_price']
-    inlines = [CharachterInline, ImgInline, ProductRedirectFromInline]
+    fields = [
+        "name",
+        "slug",
+        "sub_categories",
+        "tags",
+        "code",
+        "actual_price",
+        "current_price",
+        "is_present",
+        "description",
+        "priority",
+    ]
+    list_display = ["name", "code", "actual_price", "current_price"]
+    inlines = [
+        CharacteristicInline,
+        CharachterInline,
+        ImgInline,
+        ProductRedirectFromInline,
+    ]
     # inlines = [CharachterInline, ImgInline, DocInline]
     # form = ProductAdminForm
-    filter_horizontal = ("sub_categories", "tags", "filters")
-    
+    filter_horizontal = (
+        "sub_categories",
+        "tags",
+    )
+
     # def save_related(self, request, form, formsets, change):
     #   super().save_related(request, form, formsets, change)
     #   changed = form.has_changed()
@@ -75,35 +119,44 @@ class ProductAdmin(TranslatableAdmin):
 
 
 class CategoryAdmin(TranslatableAdmin):
-    list_display = ["name",]
-    exclude = ('slug',)
+    list_display = [
+        "name",
+    ]
+    exclude = ("slug",)
 
     def get_queryset(self, request):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
-        return super(CategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
-    
+        return (
+            super(CategoryAdmin, self).get_queryset(request).translated(language_code).order_by("translations__name")
+        )
+
     def has_add_permission(self, request, obj=None):
-      return False
-    
+        return False
+
     def has_delete_permission(self, request, obj=None):
-      return False
+        return False
 
 
 class CategoryRedirectFromInline(admin.TabularInline):
-  model = CategoryRedirectFrom
-  extra = 1
+    model = CategoryRedirectFrom
+    extra = 1
+
 
 class SubCategoryAdmin(TranslatableAdmin):
-    fields = ['name', 'slug', 'category', 'filters', 'img', 'description', 'priority']
-    list_display = ["name", 'category']
+    fields = ["name", "slug", "category", "img", "description", "priority"]
+    list_display = ["name", "category"]
     inlines = (CategoryRedirectFromInline,)
-    filter_horizontal = ("filters",)
 
     def get_queryset(self, request):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
-        return super(SubCategoryAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
+        return (
+            super(SubCategoryAdmin, self)
+            .get_queryset(request)
+            .translated(language_code)
+            .order_by("translations__name")
+        )
 
     # def save_related(self, request, form, formsets, change):
     #   super().save_related(request, form, formsets, change)
@@ -115,18 +168,19 @@ class SubCategoryAdmin(TranslatableAdmin):
 
 
 class TagRedirectFromInline(admin.TabularInline):
-  model = TagRedirectFrom
-  extra = 1
+    model = TagRedirectFrom
+    extra = 1
+
 
 class TagAdmin(TranslatableAdmin):
-    fields = ['name', 'slug']
+    fields = ["name", "slug"]
     list_display = ["name"]
     inlines = (TagRedirectFromInline,)
 
     def get_queryset(self, request):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
-        return super(TagAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
+        return super(TagAdmin, self).get_queryset(request).translated(language_code).order_by("translations__name")
 
     # def save_related(self, request, form, formsets, change):
     #   super().save_related(request, form, formsets, change)
@@ -137,25 +191,65 @@ class TagAdmin(TranslatableAdmin):
     #   receivers = full_tag_save_admin.send(sender=Tag, instance=form.instance, changed=changed)
 
 
-class FilterAdmin(TranslatableAdmin):
-    fields = ['name', 'slug']
-    list_display = ["name"]
-
-    # def get_queryset(self, request):
-    #     # Limit to a single language!
-    #     language_code = self.get_queryset_language(request)
-    #     return super(TagAdmin, self).get_queryset(request).translated(language_code).order_by('translations__name')
-
-
 class CharValueAdmin(TranslatableAdmin):
-    list_display = ['product', 'key', 'value']
+    list_display = ["product", "key", "value"]
     # fields = ['value']
 
     def get_queryset(self, request):
         # Limit to a single language!
         language_code = self.get_queryset_language(request)
-        return super(CharValueAdmin, self).get_queryset(request).translated(language_code).order_by('product')
+        return super(CharValueAdmin, self).get_queryset(request).translated(language_code).order_by("product")
 
+
+class CharacteristicValueInlineFormSet(TranslatableBaseInlineFormSet):
+    def validate_unique(self):
+        name_values = set()
+        slug_values = set()
+        errors = []
+        for form in self.forms:
+            name = form["name"].value().strip()
+            slug = form["slug"].value().strip()
+
+            if name == "":
+                continue
+
+            if name in name_values:
+                errors.append("Задано несколько одинаковых значений")
+            else:
+                name_values.add(name)
+
+            if slug == "":
+                continue
+
+            if slug in slug_values:
+                errors.append("Задано несколько одинаковых слагов")
+            else:
+                slug_values.add(slug)
+
+        if errors:
+            raise ValidationError(errors)
+
+        return super().validate_unique()
+
+
+class CharacteristicValueInline(TranslatableTabularInline):
+    model = CharacteristicValue
+    formset = CharacteristicValueInlineFormSet
+
+
+class CharachteristicAdmin(TranslatableAdmin):
+    inlines = (CharacteristicValueInline,)
+
+
+admin.site.register(Characteristic, CharachteristicAdmin)
+
+
+class CharachteristicValueAdmin(TranslatableAdmin):
+    def get_model_perms(self, request):
+        return {}
+
+
+admin.site.register(CharacteristicValue, CharachteristicValueAdmin)
 
 
 admin.site.register(Product, ProductAdmin)
@@ -163,5 +257,4 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(CharValue, CharValueAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(Filter, FilterAdmin)
 # admin.site.register(CharValue)

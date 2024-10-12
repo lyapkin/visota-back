@@ -58,3 +58,12 @@ def generate_unique_slug_translated(klass, klass2, field):
         unique_slug = f'{origin_slug}-{numb}'
         numb += 1
     return unique_slug
+
+def generate_unique_characteristic_value_slug(klass, field, obj):
+    origin_slug = slugify(unidecode(field))
+    unique_slug = origin_slug
+    numb = 1
+    while klass.objects.filter(characteristic=obj.characteristic.id, translations__slug=unique_slug, translations__language_code=obj.language_code).exists():
+        unique_slug = f'{origin_slug}-{numb}'
+        numb += 1
+    return unique_slug

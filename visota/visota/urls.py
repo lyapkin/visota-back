@@ -24,6 +24,7 @@ from seo.views import robots
 urlpatterns = [
     path('robots.txt', robots),
     path('admin/', admin.site.urls),
+    path('smart_selects/', include('smart_selects.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('api/vacancies/', include('apps.vacancies.urls')),
