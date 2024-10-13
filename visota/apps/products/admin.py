@@ -206,6 +206,9 @@ class CharacteristicValueInline(TranslatableTabularInline):
     model = CharacteristicValue
     formset = CharacteristicValueInlineFormSet
 
+    verbose_name = "Возможное значение характеристики"
+    verbose_name_plural = "Возможные значения характеристики"
+
 
 class CharachteristicAdmin(TranslatableAdmin):
     inlines = (CharacteristicValueInline,)
