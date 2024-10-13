@@ -81,25 +81,6 @@ class TagRedirectFrom(models.Model):
         verbose_name_plural = "Старые слаги (редирект (seo))"
 
 
-class Filter(TranslatableModel):
-    translations = TranslatedFields(
-        name=models.CharField("название фильтра", max_length=50, unique=True),
-        slug=models.SlugField("slug", max_length=60, unique=True, blank=True),
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "фильтр"
-        verbose_name_plural = "фильтры"
-
-    def save(self, *args, **kwargs):
-        if not self.slug.strip():
-            self.slug = generate_unique_slug_translated(Filter, None, self.name)
-        return super().save(*args, **kwargs)
-
-
 class Category(TranslatableModel):
     translations = TranslatedFields(name=models.CharField("название группы", max_length=50, unique=True))
     slug = models.SlugField("url", max_length=60, unique=True)
@@ -141,8 +122,6 @@ class SubCategory(TranslatableModel):
     category = models.ForeignKey(Category, models.CASCADE, related_name="subcategories", verbose_name="группа")
     priority = models.PositiveSmallIntegerField("позиция в фильтре каталога", default=32000)
     img = models.ImageField("картинка категории", upload_to=upload_category_img_to, null=True)
-
-    filters = models.ManyToManyField(Filter, related_name="categories", verbose_name="фильтры")
 
     def __str__(self):
         return self.name
@@ -221,9 +200,9 @@ class Product(TranslatableModel):
     is_present = models.BooleanField("в наличии", default=False)
     views = models.PositiveIntegerField("просмотры", default=0)
 
-    filters = models.ManyToManyField(Filter, related_name="products", verbose_name="фильтры", blank=True)
-
-    characteristics = models.ManyToManyField("Characteristic", through="ProductCharacteristic")
+    characteristics = models.ManyToManyField(
+        "Characteristic", through="ProductCharacteristic", verbose_name="характеристики"
+    )
 
     def __str__(self):
         return self.name
@@ -238,23 +217,6 @@ class Product(TranslatableModel):
                 Product, Product.productredirectfrom_set.rel.related_model, self.name
             )
         return super().save(*args, **kwargs)
-
-
-class CharValue(TranslatableModel):
-    translations = TranslatedFields(
-        key=models.CharField("характеристика", max_length=50),
-        value=models.CharField("значение характеристики", max_length=50),
-        # meta = {'unique_together': [('key', 'value','product')]}
-    )
-    product = models.ForeignKey(Product, models.CASCADE, related_name="charachteristics", verbose_name="товар")
-
-    def __str__(self):
-        return self.product.name + " " + self.key + " " + self.value
-
-    class Meta:
-        verbose_name = "характеристика товара"
-        verbose_name_plural = "характеристики товаров"
-        # unique_together = ['translations', 'product']
 
 
 class Characteristic(TranslatableModel):
@@ -286,7 +248,7 @@ class CharacteristicValue(TranslatableModel):
         verbose_name="характеристика товара",
     )
     translations = TranslatedFields(
-        name=models.CharField("значение характеристики товара", max_length=60),
+        name=models.CharField("значение характеристики товара", blank=True, max_length=60),
         slug=models.SlugField("слаг", max_length=70, blank=True),
     )
 
@@ -331,13 +293,14 @@ class CharacteristicValue(TranslatableModel):
 
 def validate_is_value_belong_to_characteristic(value):
     result = CharacteristicValue.objects.get(pk=value)
-    if result.characteristic != value:
+    print(result.characteristic.id)
+    if result.characteristic.id != value:
         raise ValidationError(f"Данное значение не принадлежит этой характеристике")
 
 
 class ProductCharacteristic(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    characteristic = models.ForeignKey(Characteristic, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="товар")
+    characteristic = models.ForeignKey(Characteristic, on_delete=models.CASCADE, verbose_name="характеристика")
     characteristic_value = ChainedForeignKey(
         CharacteristicValue,
         chained_field="characteristic",
@@ -346,16 +309,27 @@ class ProductCharacteristic(models.Model):
         auto_choose=True,
         sort=False,
         on_delete=models.CASCADE,
-        validators=[validate_is_value_belong_to_characteristic],
+        verbose_name="значение",
     )
 
+    def __str__(self):
+        return self.product.name + " " + self.characteristic.name + " " + self.characteristic_value.name
+
     class Meta:
+        verbose_name = "характеристики товара"
+        verbose_name_plural = "характеристики товара"
         constraints = [
             models.UniqueConstraint(
                 fields=("product", "characteristic"),
                 name="unique_product_characteristic",
             ),
         ]
+
+    def validate_constraints(self, exclude=...):
+        print(self.characteristic.id)
+        if self.characteristic.id != self.characteristic_value.characteristic.id:
+            raise ValidationError({"characteristic_value": "Данное значение не принадлежит этой характеристике"})
+        return super().validate_constraints(exclude)
 
 
 class ProductImg(models.Model):

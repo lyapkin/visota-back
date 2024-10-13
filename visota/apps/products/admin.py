@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.utils.translation import get_language
 from parler.admin import (
     TranslatableAdmin,
     TranslatableTabularInline,
@@ -11,7 +12,6 @@ from .models import (
     Product,
     Category,
     SubCategory,
-    CharValue,
     ProductImg,
     CategoryRedirectFrom,
     ProductRedirectFrom,
@@ -36,34 +36,8 @@ class ImgInline(admin.TabularInline):
         return formset
 
 
-class CharachterInline(TranslatableTabularInline):
-    model = CharValue
-    # def get_formset(self, request, obj=None, **kwargs):
-    #     formset = super().get_formset(request, obj=None, **kwargs)
-    #     formset.validate_min = True
-    #     return formset
-
-
 # class DocInline(admin.TabularInline):
 #     model = ProductDoc
-
-
-# class ProductAdminForm(TranslatableModelForm):
-#     # charachteristics = forms.ModelMultipleChoiceField(queryset=CharValue.objects.order_by('char__name'))
-#     # sub_categories = forms.ModelMultipleChoiceField(queryset=SubCategory.objects.order_by('name'))
-
-#     class Meta:
-#         model = Product
-#         exclude = ('slug',)
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['charachteristics'].queryset = (
-#             self.fields['charachteristics'].queryset.order_by('char__name')
-#         )
-#         self.fields['sub_categories'].queryset = (
-#             self.fields['sub_categories'].queryset.order_by('name')
-#         )
 
 
 class CharacteristicInline(admin.TabularInline):
@@ -73,7 +47,14 @@ class CharacteristicInline(admin.TabularInline):
         fs = super().get_formset(request, obj, **kwargs)
         fs.form.base_fields["characteristic_value"].widget.can_add_related = False
         fs.form.base_fields["characteristic_value"].widget.can_change_related = False
+        fs.form.base_fields["characteristic_value"].widget.can_view_related = False
         # fs.form.base_fields['some_field'].widget.can_delete_related = False
+
+        language_code = get_language()
+        fs.form.base_fields["characteristic"].queryset = Characteristic.objects.translated(language_code).order_by(
+            "translations__name"
+        )
+
         return fs
 
 
@@ -98,7 +79,6 @@ class ProductAdmin(TranslatableAdmin):
     list_display = ["name", "code", "actual_price", "current_price"]
     inlines = [
         CharacteristicInline,
-        CharachterInline,
         ImgInline,
         ProductRedirectFromInline,
     ]
@@ -191,16 +171,6 @@ class TagAdmin(TranslatableAdmin):
     #   receivers = full_tag_save_admin.send(sender=Tag, instance=form.instance, changed=changed)
 
 
-class CharValueAdmin(TranslatableAdmin):
-    list_display = ["product", "key", "value"]
-    # fields = ['value']
-
-    def get_queryset(self, request):
-        # Limit to a single language!
-        language_code = self.get_queryset_language(request)
-        return super(CharValueAdmin, self).get_queryset(request).translated(language_code).order_by("product")
-
-
 class CharacteristicValueInlineFormSet(TranslatableBaseInlineFormSet):
     def validate_unique(self):
         name_values = set()
@@ -240,6 +210,10 @@ class CharacteristicValueInline(TranslatableTabularInline):
 class CharachteristicAdmin(TranslatableAdmin):
     inlines = (CharacteristicValueInline,)
 
+    def get_queryset(self, request):
+        language_code = self.get_queryset_language(request)
+        return super().get_queryset(request).translated(language_code).order_by("translations__name")
+
 
 admin.site.register(Characteristic, CharachteristicAdmin)
 
@@ -255,6 +229,4 @@ admin.site.register(CharacteristicValue, CharachteristicValueAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
-admin.site.register(CharValue, CharValueAdmin)
 admin.site.register(Tag, TagAdmin)
-# admin.site.register(CharValue)
