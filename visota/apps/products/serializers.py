@@ -4,6 +4,7 @@ from parler_rest.serializers import TranslatableModelSerializer
 from parler_rest.fields import TranslatedFieldsField
 
 from .models import *
+from seo.serializers import SEOProductPageSerializer, SEOCategoryPageSerializer, SEOTagPageSerializer
 
 
 class ContentFieldSerializer(serializers.Field):
@@ -80,6 +81,7 @@ class ProductSerializer(serializers.ModelSerializer):
     characteristics = ProductCharacteristicSerializer(many=True, read_only=True, source="productcharacteristic_set")
     img_urls = ProductImgsSerializer(many=True)
     description = ContentFieldSerializer()
+    seo = SEOProductPageSerializer()
 
     class Meta:
         model = Product
@@ -95,6 +97,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "img_urls",
             # 'doc_urls',
             "is_present",
+            "seo",
         )
         lookup_field = "slug"
 
@@ -173,10 +176,18 @@ class SubcategorySerializer(TranslatableModelSerializer):
     # img = serializers.CharField(source='img.url')
     img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
     filters = ProductFilterSerializer(many=True, source="products")
+    seo = SEOCategoryPageSerializer()
 
     class Meta:
         model = SubCategory
-        fields = ("id", "slug", "translations", "img", "filters")
+        fields = (
+            "id",
+            "slug",
+            "translations",
+            "img",
+            "filters",
+            "seo",
+        )
 
     def to_representation(self, instance):
         if instance.has_translation(instance.get_current_language()):
@@ -210,10 +221,11 @@ class SubcategorySerializer(TranslatableModelSerializer):
 
 class TagSerializer(TranslatableModelSerializer):
     # translations = TranslatedFieldsField(shared_model=Tag)
+    seo = SEOTagPageSerializer()
 
     class Meta:
         model = Tag
-        fields = ("id", "name", "slug")
+        fields = ("id", "name", "slug", "seo")
 
     # def to_representation(self, instance):
     #   representation = super().to_representation(instance)
