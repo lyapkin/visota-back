@@ -90,7 +90,7 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
             return JsonResponse({"name": cat.name, "description": cat.description})
         except SubCategory.DoesNotExist:
             active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
-            return redirect(f"/{active_slug.to.slug}/", permanent=True)
+            return redirect(f"https://visota13.ru/{get_language()}/product/{active_slug.to.slug}/", permanent=True)
 
     @action(detail=True)
     def exists(self, request, slug=None):
