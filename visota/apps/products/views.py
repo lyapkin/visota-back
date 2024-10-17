@@ -36,7 +36,7 @@ class ProductApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
             instance = self.get_object()
         except Http404:
             active_slug = get_object_or_404(ProductRedirectFrom, lang=get_language(), old_slug=slug)
-            return redirect(f"https://visota13.ru/{get_language()}/product/{active_slug.to.slug}/", permanent=True)
+            return redirect(f"/{active_slug.to.slug}/", permanent=True)
         instance.views = F("views") + 1
         instance.save()
         serializer = self.get_serializer(instance)
