@@ -69,34 +69,11 @@ class CategoryApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
     lookup_field = "translations__slug"
     lookup_url_kwarg = "slug"
 
-    # def retrieve(self, request, slug=None, *args, **kwargs):
-    #     category = get_object_or_404(SubCategory, translations__slug=slug)
-    #     products = category.products.translated().all()
-
-    #     products = self.filter(products)
-
-    #     page = self.paginate_queryset(products)
-    #     if page is not None:
-    #         serializer = ProductSerializer(page, many=True, context={'request': request})
-    #         return self.get_paginated_response(serializer.data)
-
-    #     serializer = self.get_serializer(products, many=True, context={'request': request})
-
-    #     return Response(serializer.data)
-
     def retrieve(self, request, slug=None, *args, **kwargs):
         try:
             cat = SubCategory.objects.get(translations__slug=slug)
-            return JsonResponse({"name": cat.name, "description": cat.description})
-        except SubCategory.DoesNotExist:
-            active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
-            return redirect(f"/{active_slug.to.slug}/", permanent=True)
-
-    @action(detail=True)
-    def exists(self, request, slug=None):
-        try:
-            cat = SubCategory.objects.get(translations__slug=slug)
-            return JsonResponse({"name": cat.name, "description": cat.description})
+            serializer = CategoryItemSerializer(cat)
+            return Response(serializer.data)
         except SubCategory.DoesNotExist:
             active_slug = get_object_or_404(CategoryRedirectFrom, lang=get_language(), old_slug=slug)
             return redirect(f"/{active_slug.to.slug}/", permanent=True)
@@ -131,7 +108,8 @@ class TagApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
     def retrieve(self, request, slug=None, *args, **kwargs):
         try:
             tag = Tag.objects.get(translations__slug=slug)
-            return JsonResponse({"name": tag.name})
+            serializer = TagItemSerializer(tag)
+            return Response(serializer.data)
         except Tag.DoesNotExist:
             active_slug = get_object_or_404(TagRedirectFrom, lang=get_language(), old_slug=slug)
             return redirect(f"/{active_slug.to.slug}/", permanent=True)

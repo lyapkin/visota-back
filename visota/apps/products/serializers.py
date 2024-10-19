@@ -171,12 +171,19 @@ class ProductFilterSerializer(serializers.ModelSerializer):
         return representation
 
 
+class CategoryItemSerializer(TranslatableModelSerializer):
+    seo = SEOCategoryPageSerializer()
+
+    class Meta:
+        model = SubCategory
+        fields = ("name", "description", "seo")
+
+
 class SubcategorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(shared_model=SubCategory)
     # img = serializers.CharField(source='img.url')
     img = serializers.ImageField(max_length=None, use_url=False, allow_null=True, required=False)
     filters = ProductFilterSerializer(many=True, source="products")
-    seo = SEOCategoryPageSerializer()
 
     class Meta:
         model = SubCategory
@@ -186,7 +193,6 @@ class SubcategorySerializer(TranslatableModelSerializer):
             "translations",
             "img",
             "filters",
-            "seo",
         )
 
     def to_representation(self, instance):
@@ -219,13 +225,24 @@ class SubcategorySerializer(TranslatableModelSerializer):
             return representation
 
 
-class TagSerializer(TranslatableModelSerializer):
-    # translations = TranslatedFieldsField(shared_model=Tag)
+class TagItemSerializer(TranslatableModelSerializer):
     seo = SEOTagPageSerializer()
 
     class Meta:
         model = Tag
-        fields = ("id", "name", "slug", "seo")
+        fields = ("name", "seo")
+
+
+class TagSerializer(TranslatableModelSerializer):
+    # translations = TranslatedFieldsField(shared_model=Tag)
+
+    class Meta:
+        model = Tag
+        fields = (
+            "id",
+            "name",
+            "slug",
+        )
 
     # def to_representation(self, instance):
     #   representation = super().to_representation(instance)
