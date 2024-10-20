@@ -1,8 +1,9 @@
 venv/
 .env
 __pycache__/
-static/
+/visota/static/
 db.sqlite3
 media/
 db.json
 _delete/
+.prettierignore

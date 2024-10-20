@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.utils.translation import get_language
+from django.utils.html import mark_safe
 from parler.admin import (
     TranslatableAdmin,
     TranslatableTabularInline,
     TranslatableBaseInlineFormSet,
 )
+from django import forms
 
 # Register your models here.
 from .models import (
@@ -23,21 +25,23 @@ from .models import (
 )
 from .signals import full_product_save_admin, full_category_save_admin
 
+
 # Register your models here.
-
-
 class ImgInline(admin.TabularInline):
     model = ProductImg
     min_num = 1
+    max_num = 0
+    extra = 0
+    fields = ("img_url", "order")
+    template = "admin/products/product_img/image_inline.html"
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj=None, **kwargs)
         formset.validate_min = True
         return formset
 
-
-# class DocInline(admin.TabularInline):
-#     model = ProductDoc
+    class Media:
+        js = ("products/js/admin/add_img_to_list.js",)
 
 
 class CharacteristicInline(admin.TabularInline):
@@ -82,8 +86,6 @@ class ProductAdmin(TranslatableAdmin):
         ImgInline,
         ProductRedirectFromInline,
     ]
-    # inlines = [CharachterInline, ImgInline, DocInline]
-    # form = ProductAdminForm
     filter_horizontal = (
         "sub_categories",
         "tags",

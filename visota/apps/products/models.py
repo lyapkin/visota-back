@@ -335,6 +335,7 @@ class ProductCharacteristic(models.Model):
 class ProductImg(models.Model):
     img_url = models.ImageField("изображение товара", upload_to=upload_product_img_to)
     product = models.ForeignKey(Product, models.CASCADE, related_name="img_urls", verbose_name="товар")
+    order = models.PositiveSmallIntegerField("порядок", default=10)
 
     def __str__(self):
         return str(self.img_url)
@@ -342,6 +343,7 @@ class ProductImg(models.Model):
     class Meta:
         verbose_name = "изображение товара"
         verbose_name_plural = "изображения товара"
+        ordering = ("product", "order", "id")
 
 
 # class ProductDoc(models.Model):
