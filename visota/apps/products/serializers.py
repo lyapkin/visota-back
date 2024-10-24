@@ -124,6 +124,13 @@ class ProductItemSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["characteristics"] = [char for char in representation["characteristics"] if char is not None]
         representation["categories"] = [cat for cat in representation["categories"] if cat is not None]
+        chars = {}
+        for char in representation["characteristics"]:
+            if char["characteristic"]["id"] not in chars:
+                chars[char["characteristic"]["id"]] = char["characteristic"]
+                chars[char["characteristic"]["id"]]["values"] = []
+            chars[char["characteristic"]["id"]]["values"].append(char["characteristic_value"])
+        representation["characteristics"] = [v for v in chars.values()]
         return representation
 
 
@@ -151,6 +158,13 @@ class ProductSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation["characteristics"] = [char for char in representation["characteristics"] if char is not None]
+        chars = {}
+        for char in representation["characteristics"]:
+            if char["characteristic"]["id"] not in chars:
+                chars[char["characteristic"]["id"]] = char["characteristic"]
+                chars[char["characteristic"]["id"]]["values"] = []
+            chars[char["characteristic"]["id"]]["values"].append(char["characteristic_value"])
+        representation["characteristics"] = [v for v in chars.values()]
         return representation
 
 

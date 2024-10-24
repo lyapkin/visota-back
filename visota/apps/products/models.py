@@ -323,13 +323,12 @@ class ProductCharacteristic(models.Model):
         verbose_name_plural = "характеристики товара"
         constraints = [
             models.UniqueConstraint(
-                fields=("product", "characteristic"),
-                name="unique_product_characteristic",
+                fields=("product", "characteristic", "characteristic_value"),
+                name="unique_product_characteristic_value",
             ),
         ]
 
     def validate_constraints(self, exclude=...):
-        print(self.characteristic.id)
         if self.characteristic.id != self.characteristic_value.characteristic.id:
             raise ValidationError({"characteristic_value": "Данное значение не принадлежит этой характеристике"})
         return super().validate_constraints(exclude)
