@@ -77,11 +77,30 @@ class ProductImgsSerializer(serializers.ModelSerializer):
         fields = ("id", "img_url")
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class CategoryInProductSerializer(TranslatableModelSerializer):
+    translations = TranslatedFieldsField(shared_model=SubCategory)
+
+    class Meta:
+        model = SubCategory
+        fields = ("id", "translations")
+
+    def to_representation(self, instance):
+        lang = instance.get_current_language()
+        representation = super().to_representation(instance)
+        if lang not in representation["translations"]:
+            return None
+        representation["name"] = representation["translations"][lang]["name"]
+        representation["slug"] = representation["translations"][lang]["slug"]
+        del representation["translations"]
+        return representation
+
+
+class ProductItemSerializer(serializers.ModelSerializer):
     characteristics = ProductCharacteristicSerializer(many=True, read_only=True, source="productcharacteristic_set")
     img_urls = ProductImgsSerializer(many=True)
     description = ContentFieldSerializer()
     seo = SEOProductPageSerializer()
+    categories = CategoryInProductSerializer(many=True, read_only=True, source="sub_categories")
 
     class Meta:
         model = Product
@@ -95,9 +114,37 @@ class ProductSerializer(serializers.ModelSerializer):
             "characteristics",
             "description",
             "img_urls",
-            # 'doc_urls',
             "is_present",
+            "categories",
             "seo",
+        )
+        lookup_field = "slug"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["characteristics"] = [char for char in representation["characteristics"] if char is not None]
+        representation["categories"] = [cat for cat in representation["categories"] if cat is not None]
+        return representation
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    characteristics = ProductCharacteristicSerializer(many=True, read_only=True, source="productcharacteristic_set")
+    img_urls = ProductImgsSerializer(many=True, source="one_img")
+    description = ContentFieldSerializer()
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "code",
+            "slug",
+            "actual_price",
+            "current_price",
+            "characteristics",
+            "description",
+            "img_urls",
+            "is_present",
         )
         lookup_field = "slug"
 

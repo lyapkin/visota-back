@@ -24,8 +24,8 @@ class ProductAPIListPagination(PageNumberPagination):
 
 
 class ProductApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
-    queryset = Product.objects.translated().order_by("-id")
-    serializer_class = ProductSerializer
+    queryset = Product.objects.filter(translations__language_code=get_language())
+    serializer_action_classes = {"list": ProductSerializer, "retrieve": ProductItemSerializer}
     pagination_class = ProductAPIListPagination
     lookup_field = "translations__slug"
     lookup_url_kwarg = "slug"
@@ -41,6 +41,9 @@ class ProductApi(viewsets.ReadOnlyModelViewSet, FilterMixin):
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    def get_serializer_class(self):
+        return self.serializer_action_classes[self.action]
 
     def get_queryset(self):
         queryset = Product.objects.translated().order_by("translations__priority", "id")

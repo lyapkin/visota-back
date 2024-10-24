@@ -204,6 +204,9 @@ class Product(TranslatableModel):
         "Characteristic", through="ProductCharacteristic", verbose_name="характеристики"
     )
 
+    def one_img(self):
+        return self.img_urls.all()[:1]
+
     def __str__(self):
         return self.name
 
